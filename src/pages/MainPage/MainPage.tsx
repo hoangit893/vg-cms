@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button, Layout, Menu, theme } from "antd";
 import "./MainPage.css";
 import { Header } from "antd/es/layout/layout";
 import SideBar from "../../components/SideBar/SideBar";
 
 import ContentSide from "../../components/ContentSide/ContentSide";
-const { Footer, Sider, Content } = Layout;
+const { Sider, Content } = Layout;
 
 const MainPage = () => {
   const [collapsed, setCollapsed] = useState(false);

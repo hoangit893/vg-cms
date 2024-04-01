@@ -10,14 +10,14 @@ import {
   Select,
   notification,
 } from "antd";
-import { useParams } from "react-router-dom";
+// import { useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import AnswerForm from "../AnswerForm/AnswerForm";
 
 export default function Question() {
   const [questionList, setQuestionList] = useState([]);
   const [total, setTotal] = useState(0);
-  const params = useParams();
+  //   const params = useParams();
   const location = useLocation();
   const queries = new URLSearchParams(location.search);
   const [form] = Form.useForm();

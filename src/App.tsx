@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext } from "react";
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import AuthPage from "./pages/AuthPage/AuthPage";
@@ -23,7 +23,7 @@ const defaultData: ThemeData = {
 
 function App() {
   const AuthContext = createContext(null);
-  const [tokenAnt, setTokenAnt] = useState(defaultData);
+  let tokenAnt = defaultData;
 
   return (
     <>

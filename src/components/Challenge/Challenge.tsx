@@ -10,7 +10,7 @@ import {
   Select,
   notification,
 } from "antd";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import TextArea from "antd/es/input/TextArea";
 import UploadImage from "../UploadImage/UploadImage";
@@ -18,7 +18,7 @@ import UploadImage from "../UploadImage/UploadImage";
 export default function Challenge() {
   const [challengeList, setChallengeList] = useState([]);
   const [total, setTotal] = useState(1);
-  const params = useParams();
+  // const params = useParams();
   const location = useLocation();
   const queries = new URLSearchParams(location.search);
   const [form] = Form.useForm();

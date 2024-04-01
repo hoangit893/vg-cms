@@ -1,13 +1,6 @@
 import { useState } from "react";
 
-import {
-  Button,
-  Checkbox,
-  Form,
-  type FormProps,
-  Input,
-  notification,
-} from "antd";
+import { Button, Checkbox, Form, Input, notification } from "antd";
 import api, { setAccessToken } from "../../api";
 import { useNavigate } from "react-router-dom";
 
@@ -25,7 +18,7 @@ export default function LoginForm() {
 
   const nagivate = useNavigate();
 
-  const onFinish = async (values: FieldType) => {
+  const onFinish = async () => {
     const response = await api.login.invoke({
       data: credientials,
     });

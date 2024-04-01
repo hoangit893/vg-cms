@@ -1,4 +1,4 @@
-import { App, Flex, Menu } from "antd";
+import { Flex, Menu } from "antd";
 import type { MenuProps } from "antd";
 import {
   ApartmentOutlined,

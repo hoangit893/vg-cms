@@ -3,7 +3,6 @@ import { Button, Flex, Table, Modal, Form, Input, notification } from "antd";
 import api from "../../api/index";
 import TextArea from "antd/es/input/TextArea";
 import { Link } from "react-router-dom";
-type LayoutType = Parameters<typeof Form>[0]["layout"];
 import { useLocation } from "react-router-dom";
 import UploadImage from "../UploadImage/UploadImage";
 export default function Topic() {

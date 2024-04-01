@@ -6,7 +6,7 @@ import { useEffect } from "react";
 
 export default function UploadImage(props: any) {
   const { setImageUrl, isModalVisible } = props;
-  const uploadImageUrl = async (file: any, onSuccess: any, onError: any) => {
+  const uploadImageUrl = async (file: any, onSuccess: any) => {
     const formData = new FormData();
     formData.append("image", file);
 
@@ -34,8 +34,8 @@ export default function UploadImage(props: any) {
   const prop: UploadProps = {
     maxCount: 1,
     name: "image",
-    customRequest: ({ file, onSuccess, onError }) => {
-      uploadImageUrl(file, onSuccess, onError);
+    customRequest: ({ file, onSuccess }) => {
+      uploadImageUrl(file, onSuccess);
     },
     progress: {
       strokeColor: {
