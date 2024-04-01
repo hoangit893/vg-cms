@@ -1,6 +1,5 @@
 import axios from "axios";
 import { apiElement } from "./core";
-import { get } from "mongoose";
 
 export const setAccessToken = (token: string) => {
   token = `Bearer ${token}`;

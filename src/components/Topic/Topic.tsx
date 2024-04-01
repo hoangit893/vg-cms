@@ -1,14 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Button,
-  Flex,
-  Table,
-  Modal,
-  Form,
-  Input,
-  notification,
-  Upload,
-} from "antd";
+import { Button, Flex, Table, Modal, Form, Input, notification } from "antd";
 import api from "../../api/index";
 import TextArea from "antd/es/input/TextArea";
 import { Link } from "react-router-dom";

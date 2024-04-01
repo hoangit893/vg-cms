@@ -1,10 +1,8 @@
-import React, { createContext, useState } from "react";
-import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { createContext, useState } from "react";
+import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import AuthPage from "./pages/AuthPage/AuthPage";
 import MainPage from "./pages/MainPage/MainPage";
-import Topic from "./components/Topic/Topic";
 import { ConfigProvider } from "antd";
 type ThemeData = {
   borderRadius: number;

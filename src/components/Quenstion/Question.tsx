@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../../api";
 import {
   Button,
@@ -10,7 +10,7 @@ import {
   Select,
   notification,
 } from "antd";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import AnswerForm from "../AnswerForm/AnswerForm";
 

@@ -4,12 +4,10 @@ import {
   ApartmentOutlined,
   AppstoreOutlined,
   BookOutlined,
-  HomeOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import React from "react";
 import { Link } from "react-router-dom";
-import { get } from "mongoose";
 
 export default function SideBar() {
   type MenuItem = Required<MenuProps>["items"][number];

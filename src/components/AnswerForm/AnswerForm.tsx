@@ -1,5 +1,4 @@
 import { Button, Checkbox, Flex, Form, Input, notification } from "antd";
-import { useState } from "react";
 
 export default function AnswerForm(props: any) {
   const { answerList, setAnswerList, type } = props;

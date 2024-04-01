@@ -3,10 +3,7 @@ import { Button, Layout, Menu, theme } from "antd";
 import "./MainPage.css";
 import { Header } from "antd/es/layout/layout";
 import SideBar from "../../components/SideBar/SideBar";
-import Topic from "../../components/Topic/Topic";
-import { Route, Routes } from "react-router-dom";
-import Challenge from "../../components/Challenge/Challenge";
-import User from "../../components/User/User";
+
 import ContentSide from "../../components/ContentSide/ContentSide";
 const { Footer, Sider, Content } = Layout;
 
