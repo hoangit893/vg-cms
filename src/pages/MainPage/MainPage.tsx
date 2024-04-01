@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Layout, Menu, theme } from "antd";
+import { Button, Layout, theme } from "antd";
 import "./MainPage.css";
 import { Header } from "antd/es/layout/layout";
 import SideBar from "../../components/SideBar/SideBar";
@@ -10,7 +10,7 @@ const { Sider, Content } = Layout;
 const MainPage = () => {
   const [collapsed, setCollapsed] = useState(false);
   const {
-    token: { colorBgContainer, borderRadiusLG },
+    token: { colorBgContainer },
   } = theme.useToken();
 
   return (
