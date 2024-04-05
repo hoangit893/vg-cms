@@ -22,6 +22,7 @@ const MainPage = () => {
         }}
       >
         <Sider
+          width="15%"
           style={{
             height: "100vh",
             position: "sticky",
@@ -48,12 +49,6 @@ const MainPage = () => {
             <div className="relative">
               <ContentSide />
             </div>
-            {/* <Routes>
-              <Route path="/" element={<User></User>}></Route>
-              <Route path="topic" element={<Topic></Topic>}></Route>
-              <Route path="user" element={<User></User>}></Route>
-              <Route path="challenge" element={<Challenge></Challenge>}></Route>
-            </Routes> */}
           </Content>
         </Layout>
       </Layout>

@@ -70,9 +70,24 @@ export default function Topic() {
           </Button>
         </Flex>
       ),
-      width: 200,
+      width: 100,
     },
   ];
+
+  const formRules = {
+    name: [
+      {
+        required: true,
+        message: "Please input topic name",
+      },
+    ],
+    description: [
+      {
+        required: true,
+        message: "Please input description",
+      },
+    ],
+  };
 
   const fetchData = async () => {
     try {
@@ -127,52 +142,69 @@ export default function Topic() {
   };
 
   const createTopic = async () => {
-    console.log(currentRecord);
-    try {
-      await api.createTopic.invoke({
-        data: {
-          topicName: currentRecord.name,
-          description: currentRecord.description,
-          imageUrl: currentRecord.imageUrl,
-        },
+    form
+      .validateFields()
+      .then(async (values) => {
+        try {
+          await api.createTopic.invoke({
+            data: {
+              topicName: currentRecord.name,
+              description: currentRecord.description,
+              imageUrl: currentRecord.imageUrl,
+            },
+          });
+          notification.success({
+            message: "Create topic success",
+          });
+          fetchData();
+          setIsModalVisible(false);
+        } catch (error: any) {
+          notification.error({
+            message: error.response.data.error,
+          });
+        }
+      })
+      .catch((error) => {
+        notification.error({
+          message: "Please input all fields",
+        });
       });
-      notification.success({
-        message: "Create topic success",
-      });
-      fetchData();
-      setIsModalVisible(false);
-    } catch (error: any) {
-      notification.error({
-        message: error.response.data.error,
-      });
-    }
   };
 
   const editTopic = async () => {
-    // Make API call to update record
-    try {
-      const response = await api.updateTopic.invoke({
-        params: {
-          topicId: currentRecord.key,
-        },
-        data: {
-          topicName: currentRecord.name,
-          description: currentRecord.description,
-          imageUrl: currentRecord.imageUrl,
-        },
-      });
-      if (response.status === 200) {
-        notification.success({
-          message: "Update topic success",
+    form
+      .validateFields()
+      .then(async (values) => {
+        try {
+          const response = await api.updateTopic.invoke({
+            params: {
+              topicId: currentRecord.key,
+            },
+            data: {
+              topicName: currentRecord.name,
+              description: currentRecord.description,
+              imageUrl: currentRecord.imageUrl,
+            },
+          });
+          if (response.status === 200) {
+            notification.success({
+              message: "Update topic success",
+            });
+            fetchData();
+          }
+          setIsModalVisible(false);
+        } catch (error: any) {
+          notification.error({
+            message: error.response.data.message,
+          });
+        }
+      })
+      .catch((error) => {
+        notification.error({
+          message: "Please input all fields",
         });
-        fetchData();
-      }
-      setIsModalVisible(false);
-    } catch (error: any) {
-      notification.error({
-        message: error.response.data.message,
       });
-    }
+    // Make API call to update record
   };
 
   const deleteTopic = async (record: any) => {
@@ -259,13 +291,19 @@ export default function Topic() {
         }}
       >
         <Form layout="vertical" form={form}>
-          <Form.Item label="Name" name="name" initialValue={currentRecord.name}>
+          <Form.Item
+            label="Name"
+            name="name"
+            rules={formRules.name}
+            initialValue={currentRecord.name}
+          >
             <Input placeholder="Topic name" onChange={onNameChange} />
           </Form.Item>
-          <Form.Item>
+          <Form.Item label="Image" name="image">
             <UploadImage
               isModalVisible={isModalVisible}
               record={currentRecord}
+              imageUrl={currentRecord.imageUrl}
               setImageUrl={(url: string) => {
                 setCurrentRecord((prev: any) => ({ ...prev, imageUrl: url }));
               }}
@@ -275,6 +313,7 @@ export default function Topic() {
             label="Description"
             name="description"
             initialValue={currentRecord.description}
+            rules={formRules.description}
           >
             <TextArea
               style={{

@@ -43,8 +43,17 @@ export default function AnswerForm(props: any) {
         <Button onClick={addAnswer}> Add answer</Button>
       </Form.Item>
       {answerList.map((answer: any, index: number) => (
-        <Form.Item key={index} label={`Answer ${index + 1}`}>
-          <Flex gap={10}>
+        <Flex gap={10}>
+          <Form.Item
+            key={index}
+            label={`Answer ${index + 1}`}
+            rules={[
+              {
+                required: true,
+                message: "Please input your answer!",
+              },
+            ]}
+          >
             <Input
               required
               style={{ width: "90%" }}
@@ -56,15 +65,15 @@ export default function AnswerForm(props: any) {
                 newAnswerList[index].value = e.target.value;
                 setAnswerList(newAnswerList);
               }}
-            />
-            <Checkbox
-              checked={answer.isCorrect}
-              onChange={() => {
-                handleCorrectAnswer(index);
-              }}
-            ></Checkbox>
-          </Flex>
-        </Form.Item>
+            />{" "}
+          </Form.Item>
+          <Checkbox
+            checked={answer.isCorrect}
+            onChange={() => {
+              handleCorrectAnswer(index);
+            }}
+          ></Checkbox>
+        </Flex>
       ))}
     </>
   );

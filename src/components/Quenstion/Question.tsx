@@ -9,6 +9,9 @@ import {
   Input,
   Select,
   notification,
+  Typography,
+  List,
+  Grid,
 } from "antd";
 // import { useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
@@ -53,7 +56,7 @@ export default function Question() {
       title: "Question",
       dataIndex: "question",
       key: "question",
-      width: 180,
+      width: "800",
     },
     {
       title: "Question Type",
@@ -65,6 +68,7 @@ export default function Question() {
       title: "Challenge",
       dataIndex: "challengeName",
       key: "challengeName",
+      width: 180,
     },
     {
       title: "Action",
@@ -108,13 +112,13 @@ export default function Question() {
   };
   //Fetch data from server
   const fetchData = async () => {
+    console.log(queries);
     const response = await api.getQuestionList.invoke({
       queries: queries,
     });
     if (response.status === 200) {
       setTotal(response.data.total);
       let data = response.data.questionList;
-      console.log(data);
       data = data.map((question: any, index: number) => {
         return {
           key: index + 1,
@@ -127,7 +131,6 @@ export default function Question() {
         };
       });
       setQuestionList(data);
-      console.log(questionList);
     } else {
       console.log("error");
     }
@@ -152,7 +155,6 @@ export default function Question() {
   //Fetch data when page load
   useEffect(() => {
     getchallengeList();
-    console.log(challengeList);
     fetchData();
   }, [currentPage]);
 
@@ -164,28 +166,36 @@ export default function Question() {
   };
 
   const editQuestion = async () => {
-    console.log(currentRecord);
-    try {
-      await api.updateQuestion.invoke({
-        params: {
-          questionId: currentRecord.questionId,
-        },
-        data: {
-          question: currentRecord.question,
-          type: currentRecord.type,
-          answerList: currentRecord.answerList,
-          challengeId: currentRecord.challengeId,
-        },
+    form
+      .validateFields()
+      .then(async () => {
+        try {
+          await api.updateQuestion.invoke({
+            params: {
+              questionId: currentRecord.questionId,
+            },
+            data: {
+              question: currentRecord.question,
+              type: currentRecord.type,
+              answerList: currentRecord.answerList,
+              challengeId: currentRecord.challengeId,
+            },
+          });
+          notification.success({
+            message: "Update challenge success",
+          });
+          fetchData();
+          resetRecord();
+          setIsModalVisible(false);
+        } catch (error) {
+          console.error("Error updating topic:", error);
+        }
+      })
+      .catch((error) => {
+        notification.error({
+          message: error.response.data.message,
+        });
       });
-      notification.success({
-        message: "Update challenge success",
-      });
-      fetchData();
-      resetRecord();
-      setIsModalVisible(false);
-    } catch (error) {
-      console.error("Error updating topic:", error);
-    }
   };
 
   const handleAddButton = () => {
@@ -195,15 +205,26 @@ export default function Question() {
   };
 
   const createQuestion = async () => {
-    try {
-      await api.createQuestion.invoke({
-        data: currentRecord,
+    form
+      .validateFields()
+      .then(async () => {
+        try {
+          await api.createQuestion.invoke({
+            data: currentRecord,
+          });
+          await fetchData();
+          setIsModalVisible(false);
+        } catch (error: any) {
+          notification.error({
+            message: error.response.data.message,
+          });
+        }
+      })
+      .catch((error) => {
+        notification.error({
+          message: error.response.data.message,
+        });
       });
-      fetchData();
-      setIsModalVisible(false);
-    } catch (error) {
-      console.error("Error creating topic:", error);
-    }
   };
 
   const deletionQuestion = async (record: any) => {
@@ -214,12 +235,12 @@ export default function Question() {
         },
       });
       notification.success({
-        message: "Delete challenge success",
+        message: "Delete question success",
       });
-      fetchData();
+      await fetchData();
       setDeleteConfirm(false);
-    } catch (error) {
-      console.error("Error deleting challenge:", error);
+    } catch (error: any) {
+      console.log(error.response.data.message);
     }
   };
   const handleCancel = () => {
@@ -233,7 +254,28 @@ export default function Question() {
       challenge: currentRecord.challengeId,
       type: currentRecord.type,
     });
-  }, [isModalVisible]);
+  }, [isModalVisible, currentRecord, form]); // Update dependency array
+
+  const formRules = {
+    question: [
+      {
+        required: true,
+        message: "Please input your question!",
+      },
+    ],
+    challenge: [
+      {
+        required: true,
+        message: "Please select challenge!",
+      },
+    ],
+    type: [
+      {
+        required: true,
+        message: "Please select question type!",
+      },
+    ],
+  };
 
   return (
     <>
@@ -274,6 +316,7 @@ export default function Question() {
       >
         <Form layout="vertical" form={form}>
           <Form.Item
+            rules={formRules.question}
             label="Question"
             name="question"
             initialValue={currentRecord.question}
@@ -289,12 +332,13 @@ export default function Question() {
             />
           </Form.Item>
           <Form.Item
+            rules={formRules.challenge}
             label="Challenge"
             name="challenge"
             initialValue={currentRecord.challengeId}
           >
             <Select
-              placeholder="Select topic"
+              placeholder="Select challenge"
               allowClear
               onChange={(value) => {
                 setCurrentRecord({ ...currentRecord, challengeId: value });
@@ -313,29 +357,37 @@ export default function Question() {
           </Form.Item>
           <Flex gap={10} justify="left">
             <Form.Item
+              rules={formRules.type}
               style={{ width: "50%" }}
               label="Question Type"
-              name="Question Type"
+              name="type"
               initialValue={currentRecord.type}
             >
               <Select
                 placeholder="Select type"
                 allowClear
                 onChange={(value) => {
-                  setCurrentRecord({ ...currentRecord, type: value });
-                  if (value === "single-choice") {
+                  if (value === "arrange") {
                     setCurrentRecord({
                       ...currentRecord,
-                      answerList: currentRecord.answerList.map(
-                        (answer: any) => {
-                          return {
-                            value: answer.value,
-                            isCorrect: false,
-                          };
-                        }
-                      ),
+                      answerList: [],
+                      type: value,
                     });
+                    return;
                   }
+                  let newAnswerList = currentRecord.answerList.map(
+                    (answer: any) => {
+                      return {
+                        value: answer.value,
+                        isCorrect: false,
+                      };
+                    }
+                  );
+                  setCurrentRecord({
+                    ...currentRecord,
+                    answerList: newAnswerList,
+                    type: value,
+                  });
                 }}
                 options={[
                   {
@@ -359,19 +411,42 @@ export default function Question() {
               ></Select>
             </Form.Item>
           </Flex>
-          <AnswerForm
-            type={currentRecord.type}
-            settype={(type: any) => {
-              setCurrentRecord({
-                ...currentRecord,
-                type: type,
-              });
-            }}
-            answerList={currentRecord.answerList}
-            setAnswerList={(answerList: any) => {
-              setCurrentRecord({ ...currentRecord, answerList: answerList });
-            }}
-          ></AnswerForm>
+          {currentRecord.type === "single-choice" ||
+          currentRecord.type === "multi-choice" ? (
+            <AnswerForm
+              type={currentRecord.type}
+              settype={(type: any) => {
+                setCurrentRecord({
+                  ...currentRecord,
+                  type: type,
+                });
+              }}
+              answerList={currentRecord.answerList}
+              setAnswerList={(answerList: any) => {
+                console.log(currentRecord.type);
+                setCurrentRecord({ ...currentRecord, answerList: answerList });
+              }}
+            ></AnswerForm>
+          ) : (
+            <>
+              <Typography.Text>Answer : </Typography.Text>
+              <Flex justify="space-between">
+                {currentRecord.answerList.map((key: any) => {
+                  return (
+                    <span
+                      style={{
+                        border: "1px solid #ccc",
+                        borderRadius: "5px",
+                        padding: "5px",
+                      }}
+                    >
+                      {key.value}
+                    </span>
+                  );
+                })}
+              </Flex>
+            </>
+          )}
         </Form>
       </Modal>
       <Modal

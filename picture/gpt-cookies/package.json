@@ -1,0 +1,30 @@
+{
+	"name": "chatgpt-cookies",
+	"version": "2.0",
+	"description": "Easily copy and download your ChatGPT Cookies + user-agent to clipboard with one click.",
+	"main": "background.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/itsbrex/ChatGPT-Cookies.git"
+	},
+	"keywords": [
+		"chatgpt",
+		"chrome-extension",
+		"session-token",
+		"copy",
+		"clipboard",
+		"cookies"
+	],
+	"author": "Brian Roach",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/itsbrex/ChatGPT-Cookies/issues"
+	},
+	"homepage": "https://github.com/itsbrex/ChatGPT-Cookies#readme",
+	"dependencies": {
+		"chrome-webstore-upload-cli": "^2.1.0"
+	}
+}

@@ -34,7 +34,6 @@ export default function Challenge() {
   });
 
   const [topicList, setTopicList] = useState([]);
-
   const [formTitle, setFormTitle] = useState("");
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [currentPage, setCurrentPage] = useState(
@@ -57,7 +56,7 @@ export default function Challenge() {
       dataIndex: "challengeName",
       render: (_: any, record: any) => {
         return (
-          <Link to={`/question/?challenge=${record.challengeId}`}>
+          <Link to={`/question/?challengeId=${record.challengeId}`}>
             {record.challengeName}
           </Link>
         );
@@ -83,7 +82,6 @@ export default function Challenge() {
       title: "Description",
       dataIndex: "description",
       key: "description",
-      width: 450,
     },
     {
       title: "Level",
@@ -101,6 +99,7 @@ export default function Challenge() {
       title: "Topic",
       dataIndex: "topicName",
       key: "topicName",
+      width: 100,
     },
     {
       title: "Action",
@@ -125,6 +124,39 @@ export default function Challenge() {
       width: 100,
     },
   ];
+
+  const formRules = {
+    challengeName: [
+      {
+        required: true,
+        message: "Please input challenge name",
+      },
+    ],
+    description: [
+      {
+        required: true,
+        message: "Please input description",
+      },
+    ],
+    level: [
+      {
+        required: true,
+        message: "Please select level",
+      },
+    ],
+    point: [
+      {
+        required: true,
+        message: "Please input point",
+      },
+    ],
+    topicId: [
+      {
+        required: true,
+        message: "Please select topic",
+      },
+    ],
+  };
 
   //Reset Record
   const resetRecord = () => {
@@ -225,11 +257,11 @@ export default function Challenge() {
       await api.createChallenge.invoke({
         data: currentRecord,
       });
-
+      await fetchData();
       notification.success({
         message: "Create challenge success",
       });
-      fetchData();
+
       setIsModalVisible(false);
     } catch (error: any) {
       console.log(error);
@@ -246,10 +278,11 @@ export default function Challenge() {
           challengeId: record.challengeId,
         },
       });
+
       notification.success({
         message: "Delete challenge success",
       });
-      fetchData();
+      await fetchData();
       setDeleteConfirm(false);
     } catch (error) {
       console.error("Error deleting challenge:", error);
@@ -304,6 +337,7 @@ export default function Challenge() {
       >
         <Form layout="vertical" form={form}>
           <Form.Item
+            rules={formRules.challengeName}
             label="Name"
             name="challengeName"
             initialValue={currentRecord.challengeName}
@@ -319,7 +353,7 @@ export default function Challenge() {
               }}
             />
           </Form.Item>
-          <Form.Item>
+          <Form.Item rules={formRules.description} label="Topic" name="topicId">
             <Select
               placeholder="Select topic"
               allowClear
@@ -328,7 +362,6 @@ export default function Challenge() {
               }}
               options={topicList.map((topic: any) => {
                 const isSelected = currentRecord.topicId == topic.topicId;
-                console.log(isSelected);
                 return {
                   value: topic.topicId,
                   label: topic.topicName,
@@ -338,7 +371,12 @@ export default function Challenge() {
             ></Select>
           </Form.Item>
           <Flex gap={10} justify="left">
-            <Form.Item style={{ width: "50%" }} label="Level" name="level">
+            <Form.Item
+              style={{ width: "50%" }}
+              label="Level"
+              name="level"
+              rules={formRules.level}
+            >
               <Select
                 placeholder="Select level"
                 allowClear
@@ -369,10 +407,12 @@ export default function Challenge() {
               style={{ width: "50%" }}
               label="Point"
               name="point"
+              rules={formRules.point}
               initialValue={currentRecord.point}
             >
               <Input
                 placeholder="Point"
+                type="number"
                 onChange={(e) =>
                   setCurrentRecord({
                     ...currentRecord,
@@ -388,6 +428,7 @@ export default function Challenge() {
             initialValue={currentRecord.image}
           >
             <UploadImage
+              imageUrl={currentRecord.imageUrl}
               setImageUrl={(url: string) => {
                 setCurrentRecord({ ...currentRecord, imageUrl: url });
               }}
