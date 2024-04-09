@@ -6,10 +6,6 @@ interface ApiElementParams {
   data?: any;
 }
 
-const baseURL = "http://127.0.0.1:3000/api/v1";
-
-// const baseURL = "http://103.30.10.141:3000/api/v1";
-
 export const apiElement = (
   method: string,
   path: string,
@@ -25,19 +21,9 @@ export const apiElement = (
           actualPath += `/${params[key]}`;
         });
       }
-
-      // if (queries) {
-      //   actualPath += "?";
-      //   Object.keys(queries).forEach((key) => {
-      //     actualPath += `${key}=${queries[key]}&`;
-      //   });
-      //   actualPath = actualPath.slice(0, -1);
-      // }
-
-      console.log(actualPath);
       return axios({
         method,
-        baseURL: customBaseUrl ? customBaseUrl : baseURL,
+        baseURL: customBaseUrl ? customBaseUrl : import.meta.env.VITE_BASE_URL,
         params: queries,
         url: actualPath,
         data: data,

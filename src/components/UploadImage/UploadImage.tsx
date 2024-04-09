@@ -1,11 +1,10 @@
 import { UploadOutlined } from "@ant-design/icons";
-import { Button } from "antd";
+import { Button, Flex } from "antd";
 import Upload, { UploadProps } from "antd/es/upload/Upload";
 import axios from "axios";
-import { useEffect } from "react";
 
 export default function UploadImage(props: any) {
-  const { setImageUrl, isModalVisible } = props;
+  const { imageUrl, setImageUrl } = props;
   const uploadImageUrl = async (file: any, onSuccess: any) => {
     const formData = new FormData();
     formData.append("image", file);
@@ -29,14 +28,13 @@ export default function UploadImage(props: any) {
     }
   };
 
-  useEffect(() => {}, [isModalVisible]);
-
   const prop: UploadProps = {
     maxCount: 1,
     name: "image",
     customRequest: ({ file, onSuccess }) => {
       uploadImageUrl(file, onSuccess);
     },
+    showUploadList: false,
     progress: {
       strokeColor: {
         "0%": "#108ee9",
@@ -45,13 +43,31 @@ export default function UploadImage(props: any) {
       size: 3,
       format: (percent) => percent && `${parseFloat(percent.toFixed(2))}%`,
     },
+    onRemove: () => {
+      setImageUrl("");
+    },
   };
 
   return (
     <>
-      <Upload {...prop}>
-        <Button icon={<UploadOutlined />}>Upload</Button>
-      </Upload>
+      <Flex align="center" justify="space-around">
+        {imageUrl != "" && (
+          <img
+            src={props.imageUrl}
+            alt=""
+            style={{
+              width: "100px",
+              height: "100px",
+              objectFit: "cover",
+              borderRadius: "0%",
+            }}
+          />
+        )}
+
+        <Upload {...prop}>
+          <Button icon={<UploadOutlined />}>Upload</Button>
+        </Upload>
+      </Flex>
     </>
   );
 }

@@ -1,9 +1,9 @@
-import { createContext } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, redirect, useNavigate } from "react-router-dom";
 import "./App.css";
 import AuthPage from "./pages/AuthPage/AuthPage";
 import MainPage from "./pages/MainPage/MainPage";
 import { ConfigProvider } from "antd";
+import AuthProvider from "./context/AuthContext";
 type ThemeData = {
   borderRadius: number;
   colorPrimary: string;
@@ -22,8 +22,9 @@ const defaultData: ThemeData = {
 };
 
 function App() {
-  const AuthContext = createContext(null);
   let tokenAnt = defaultData;
+
+  const navigate = useNavigate();
 
   return (
     <>
@@ -32,12 +33,12 @@ function App() {
           token: tokenAnt,
         }}
       >
-        <AuthContext.Provider value={null}>
+        <AuthProvider>
           <Routes>
-            <Route path="/" element={<AuthPage />} />
+            <Route path="/login" element={<AuthPage />} />
             <Route path="*" element={<MainPage />} />
           </Routes>
-        </AuthContext.Provider>
+        </AuthProvider>
       </ConfigProvider>
     </>
   );

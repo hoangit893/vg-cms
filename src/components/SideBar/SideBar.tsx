@@ -47,12 +47,6 @@ export default function SideBar() {
   return (
     <>
       <Flex vertical>
-        <div
-          className="logo"
-          style={{
-            height: "64px",
-          }}
-        ></div>
         <Menu
           defaultSelectedKeys={["dashboard"]}
           mode="inline"
