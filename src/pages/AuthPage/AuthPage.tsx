@@ -1,6 +1,6 @@
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 import LoginForm from "../../components/LoginForm/LoginForm";
-import AuthContext, { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 export default function AuthPage() {

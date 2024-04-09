@@ -24,8 +24,6 @@ const defaultData: ThemeData = {
 function App() {
   let tokenAnt = defaultData;
 
-  const navigate = useNavigate();
-
   return (
     <>
       <ConfigProvider

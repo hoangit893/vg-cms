@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Layout, theme } from "antd";
 import "./MainPage.css";
 import { Header } from "antd/es/layout/layout";
