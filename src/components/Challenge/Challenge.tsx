@@ -14,7 +14,6 @@ import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import TextArea from "antd/es/input/TextArea";
 import UploadImage from "../UploadImage/UploadImage";
-import { useAuth } from "../../context/AuthContext";
 
 export default function Challenge() {
   const [challengeList, setChallengeList] = useState([]);
