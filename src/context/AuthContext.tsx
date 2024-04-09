@@ -5,8 +5,12 @@ import { useNavigate } from "react-router-dom";
 const AuthContext = React.createContext({
   isAuthenticated: false,
   role: "guest",
-  setIsAuthenticated: () => {},
-  setRole: () => {},
+  setIsAuthenticated: (value: boolean) => {
+    console.log(value);
+  },
+  setRole: (value: "admin" | "user" | "guest") => {
+    console.log(value);
+  },
 });
 
 export function useAuth() {
