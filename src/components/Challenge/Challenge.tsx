@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import TextArea from "antd/es/input/TextArea";
 import UploadImage from "../UploadImage/UploadImage";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Challenge() {
   const [challengeList, setChallengeList] = useState([]);
@@ -216,13 +217,11 @@ export default function Challenge() {
   //Fetch data when page load
   useEffect(() => {
     getTopicList();
-    console.log(topicList);
     fetchData();
   }, [currentPage]);
 
   //Handle edit button
   const handleEditButton = (record: any) => {
-    console.log(record);
     setFormTitle("Edit Challenge");
     setCurrentRecord(record);
     setIsModalVisible(true);
@@ -239,7 +238,7 @@ export default function Challenge() {
       notification.success({
         message: "Update challenge success",
       });
-      fetchData();
+      await fetchData();
       setIsModalVisible(false);
     } catch (error) {
       console.error("Error updating topic:", error);
@@ -278,12 +277,11 @@ export default function Challenge() {
           challengeId: record.challengeId,
         },
       });
-
+      await fetchData();
+      setDeleteConfirm(false);
       notification.success({
         message: "Delete challenge success",
       });
-      await fetchData();
-      setDeleteConfirm(false);
     } catch (error) {
       console.error("Error deleting challenge:", error);
     }
@@ -293,7 +291,7 @@ export default function Challenge() {
   };
 
   useEffect(() => {
-    form.setFieldsValue(currentRecord);
+    form.resetFields();
   }, [isModalVisible]);
 
   return (
@@ -353,7 +351,12 @@ export default function Challenge() {
               }}
             />
           </Form.Item>
-          <Form.Item rules={formRules.description} label="Topic" name="topicId">
+          <Form.Item
+            rules={formRules.description}
+            label="Topic"
+            name="topicId"
+            initialValue={currentRecord.topicId}
+          >
             <Select
               placeholder="Select topic"
               allowClear
@@ -376,6 +379,7 @@ export default function Challenge() {
               label="Level"
               name="level"
               rules={formRules.level}
+              initialValue={currentRecord.level}
             >
               <Select
                 placeholder="Select level"

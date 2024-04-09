@@ -28,6 +28,7 @@ const api = {
   createQuestion: apiElement("POST", "/question/create"),
   updateQuestion: apiElement("PUT", "/question/update"),
   deleteQuestion: apiElement("DELETE", "/question/delete"),
+  auth: apiElement("GET", "/user/auth"),
 };
 
 export default api;

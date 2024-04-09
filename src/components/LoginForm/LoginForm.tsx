@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { Button, Checkbox, Form, Input, notification } from "antd";
 import api, { setAccessToken } from "../../api";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 type FieldType = {
   username: string;
@@ -16,8 +17,9 @@ export default function LoginForm() {
     password: "",
   });
 
-  const nagivate = useNavigate();
+  const { isAuthenticated, setIsAuthenticated } = useAuth();
 
+  const nagivate = useNavigate();
   const onFinish = async () => {
     const response = await api.login.invoke({
       data: credientials,
@@ -27,6 +29,7 @@ export default function LoginForm() {
       notification.success({
         message: "Login success",
       });
+      setIsAuthenticated(true);
       nagivate("/topic");
     } else {
       notification.error({
@@ -34,6 +37,12 @@ export default function LoginForm() {
       });
     }
   };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      nagivate("/topic");
+    }
+  }, [isAuthenticated]);
 
   return (
     <>

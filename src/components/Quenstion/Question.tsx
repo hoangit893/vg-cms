@@ -10,8 +10,6 @@ import {
   Select,
   notification,
   Typography,
-  List,
-  Grid,
 } from "antd";
 // import { useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
@@ -112,7 +110,6 @@ export default function Question() {
   };
   //Fetch data from server
   const fetchData = async () => {
-    console.log(queries);
     const response = await api.getQuestionList.invoke({
       queries: queries,
     });
@@ -208,17 +205,14 @@ export default function Question() {
     form
       .validateFields()
       .then(async () => {
-        try {
-          await api.createQuestion.invoke({
-            data: currentRecord,
-          });
-          await fetchData();
-          setIsModalVisible(false);
-        } catch (error: any) {
-          notification.error({
-            message: error.response.data.message,
-          });
-        }
+        await api.createQuestion.invoke({
+          data: currentRecord,
+        });
+        notification.success({
+          message: "Create question success",
+        });
+        await fetchData();
+        setIsModalVisible(false);
       })
       .catch((error) => {
         notification.error({
@@ -249,12 +243,10 @@ export default function Question() {
   };
 
   useEffect(() => {
-    form.setFieldsValue({
-      question: currentRecord.question,
-      challenge: currentRecord.challengeId,
-      type: currentRecord.type,
-    });
-  }, [isModalVisible, currentRecord, form]); // Update dependency array
+    if (isModalVisible) {
+      form.resetFields();
+    }
+  }, [isModalVisible]); // Update dependency array
 
   const formRules = {
     question: [
@@ -411,42 +403,20 @@ export default function Question() {
               ></Select>
             </Form.Item>
           </Flex>
-          {currentRecord.type === "single-choice" ||
-          currentRecord.type === "multi-choice" ? (
-            <AnswerForm
-              type={currentRecord.type}
-              settype={(type: any) => {
-                setCurrentRecord({
-                  ...currentRecord,
-                  type: type,
-                });
-              }}
-              answerList={currentRecord.answerList}
-              setAnswerList={(answerList: any) => {
-                console.log(currentRecord.type);
-                setCurrentRecord({ ...currentRecord, answerList: answerList });
-              }}
-            ></AnswerForm>
-          ) : (
-            <>
-              <Typography.Text>Answer : </Typography.Text>
-              <Flex justify="space-between">
-                {currentRecord.answerList.map((key: any) => {
-                  return (
-                    <span
-                      style={{
-                        border: "1px solid #ccc",
-                        borderRadius: "5px",
-                        padding: "5px",
-                      }}
-                    >
-                      {key.value}
-                    </span>
-                  );
-                })}
-              </Flex>
-            </>
-          )}
+
+          <AnswerForm
+            type={currentRecord.type}
+            settype={(type: any) => {
+              setCurrentRecord({
+                ...currentRecord,
+                type: type,
+              });
+            }}
+            answerList={currentRecord.answerList}
+            setAnswerList={(answerList: any) => {
+              setCurrentRecord({ ...currentRecord, answerList: answerList });
+            }}
+          ></AnswerForm>
         </Form>
       </Modal>
       <Modal

@@ -144,7 +144,7 @@ export default function Topic() {
   const createTopic = async () => {
     form
       .validateFields()
-      .then(async (values) => {
+      .then(async () => {
         try {
           await api.createTopic.invoke({
             data: {
@@ -164,7 +164,7 @@ export default function Topic() {
           });
         }
       })
-      .catch((error) => {
+      .catch(() => {
         notification.error({
           message: "Please input all fields",
         });
@@ -174,7 +174,7 @@ export default function Topic() {
   const editTopic = async () => {
     form
       .validateFields()
-      .then(async (values) => {
+      .then(async () => {
         try {
           const response = await api.updateTopic.invoke({
             params: {
@@ -199,7 +199,7 @@ export default function Topic() {
           });
         }
       })
-      .catch((error) => {
+      .catch(() => {
         notification.error({
           message: "Please input all fields",
         });
@@ -234,11 +234,7 @@ export default function Topic() {
   }, [currentPage, pageSize]);
 
   useEffect(() => {
-    form.setFieldsValue({
-      name: currentRecord.name,
-      description: currentRecord.description,
-      imageUrl: currentRecord.imageUrl,
-    });
+    form.resetFields();
   }, [isModalVisible]);
 
   const processedData = data.map((item: any, index) => {
