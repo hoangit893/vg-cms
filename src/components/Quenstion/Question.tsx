@@ -273,15 +273,19 @@ export default function Question() {
     <>
       <Button
         onClick={() => handleAddButton()}
-        type="dashed"
+        type="primary"
         style={{
-          margin: 16,
+          backgroundColor: "#1890ff",
+          width: "150px",
+          height: "40px",
+          marginBottom: "30px",
         }}
         className="float-left"
       >
         Add new question
       </Button>
       <Table
+        scroll={{ y: 300 }}
         size="middle"
         virtual
         columns={columns}

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Button, Layout, theme } from "antd";
+import { Button, Layout, theme, Typography } from "antd";
 import "./MainPage.css";
 import { Header } from "antd/es/layout/layout";
 import SideBar from "../../components/SideBar/SideBar";
@@ -17,6 +17,7 @@ const MainPage = () => {
   } = theme.useToken();
 
   const { isAuthenticated } = useAuth();
+
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/login");
@@ -31,35 +32,39 @@ const MainPage = () => {
           minWidth: "99vw",
         }}
       >
-        <Header>
-          <HeaderComponent />
-        </Header>
-
-        <Layout>
-          <Sider
-            width="15%"
+        <Sider
+          width="15%"
+          style={{
+            height: "100vh",
+            position: "sticky",
+            top: 0,
+          }}
+          collapsed={collapsed}
+          onCollapse={(value) => {
+            setCollapsed(value);
+          }}
+        >
+          <Typography.Title style={{ marginTop: 20, color: "white" }}>
+            ADMIN
+          </Typography.Title>
+          <div className="side__bar mt-12">
+            <SideBar />
+          </div>
+          <Button
+            onClick={() => setCollapsed(!collapsed)}
             style={{
-              height: "100vh",
-              position: "sticky",
-              top: 0,
-            }}
-            collapsed={collapsed}
-            onCollapse={(value) => {
-              setCollapsed(value);
+              color: colorBgContainer,
             }}
           >
-            <SideBar />
-            <Button
-              onClick={() => setCollapsed(!collapsed)}
-              style={{
-                color: colorBgContainer,
-              }}
-            >
-              hide
-            </Button>
-          </Sider>
-          <Content>
-            <div className="relative">
+            hide
+          </Button>
+        </Sider>
+        <Layout>
+          <Header className="m-5 mb-0 bg-transparent">
+            <HeaderComponent />
+          </Header>
+          <Content className="bg-E5E5E5">
+            <div className="relative m-7">
               <ContentSide />
             </div>
           </Content>

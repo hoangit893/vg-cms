@@ -4,9 +4,14 @@ import { useNavigate } from "react-router-dom";
 
 const AuthContext = React.createContext({
   isAuthenticated: false,
-  role: "guest",
   setIsAuthenticated: (value: boolean) => {},
-  setRole: (value: "admin" | "user" | "guest") => {},
+  user: {
+    username: "",
+    name: "",
+    avatarImg: "",
+    role: "guest",
+  },
+  setUser: (value: any) => {},
 });
 
 export function useAuth() {
@@ -16,21 +21,35 @@ export function useAuth() {
 function AuthProvider(props: any) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [role, setRole] = useState<"admin" | "user" | "guest">("guest");
+  const [user, setUser] = useState<{
+    username: string;
+    avatarImg: string;
+    role: "admin" | "user" | "guest";
+    name: string;
+  }>({
+    username: "",
+    avatarImg: "",
+    role: "guest",
+    name: "",
+  });
   const value = {
     isAuthenticated,
     role,
+    user,
     setIsAuthenticated,
     setRole,
+    setUser,
   };
+
   const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
       try {
         const response = await api.auth.invoke({});
-        if (response.status === 200) {
+        if (response.status === 200 && response.data.role === "admin") {
+          setUser(response.data.user);
           setIsAuthenticated(true);
-          setRole(response.data.role);
         }
       } catch (error: any) {
         setIsAuthenticated(false);

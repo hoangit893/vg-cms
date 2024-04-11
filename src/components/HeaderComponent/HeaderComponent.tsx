@@ -1,15 +1,15 @@
-import { Dropdown, Flex, Menu } from "antd";
-import { UserOutlined } from "@ant-design/icons";
+import { Avatar, Dropdown, Flex, Menu, Space, Typography } from "antd";
+import { DownOutlined, UserOutlined } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 export default function HeaderComponent() {
-  const { isAuthenticated, setIsAuthenticated } = useAuth();
+  const { isAuthenticated, setIsAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const handleLogout = () => {
     localStorage.removeItem("AccessToken");
     setIsAuthenticated(false);
-    navigate("/");
+    navigate("/login");
   };
 
   const menu = (
@@ -28,13 +28,42 @@ export default function HeaderComponent() {
   );
   return (
     <>
-      <Flex justify="space-between">
-        <h1 className="text-left text-white text-3xl mt-4">
-          <Link to="/">ADMIN</Link>
-        </h1>
-        <Dropdown overlay={menu} trigger={["hover"]}>
-          <UserOutlined className="text-white text-3xl mt-4 ml-4" />
-        </Dropdown>
+      <Flex justify="space-between" className="text-black ">
+        <Flex vertical={false} className="right__side" gap={20} align="center">
+          <Typography
+            style={{
+              color: "black",
+              fontSize: "1.4rem",
+            }}
+          >{`Hello, ${user.name}`}</Typography>
+        </Flex>
+        <Flex vertical={false} className="right__side" gap={20} align="center">
+          <Avatar size="large" src={user.avatarImg}></Avatar>
+          <Flex vertical gap={0} justify="flex-start">
+            <Typography.Text
+              style={{
+                color: "black",
+                fontSize: "1rem",
+                fontWeight: "bold",
+              }}
+            >
+              {user.name}
+            </Typography.Text>
+
+            <Typography.Text
+              style={{
+                color: "black",
+                fontSize: "0.8rem",
+                fontWeight: "normal",
+              }}
+            >
+              {user.role}
+            </Typography.Text>
+          </Flex>
+          <Dropdown overlay={menu} trigger={["hover"]}>
+            <DownOutlined />
+          </Dropdown>
+        </Flex>
       </Flex>
     </>
   );

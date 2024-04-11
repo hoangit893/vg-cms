@@ -17,7 +17,7 @@ export default function LoginForm() {
     password: "",
   });
 
-  const { isAuthenticated, setIsAuthenticated } = useAuth();
+  const { isAuthenticated, setIsAuthenticated, setUser } = useAuth();
 
   const nagivate = useNavigate();
   const onFinish = async () => {
@@ -25,6 +25,13 @@ export default function LoginForm() {
       data: credientials,
     });
     if (response.status === 200) {
+      if (response.data.role != "admin") {
+        notification.error({
+          message: "Forbidden",
+        });
+        return;
+      }
+      setUser(response.data.user);
       setAccessToken(response.data.token);
       notification.success({
         message: "Login success",

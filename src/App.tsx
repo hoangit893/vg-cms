@@ -2,35 +2,27 @@ import { Routes, Route, redirect, useNavigate } from "react-router-dom";
 import "./App.css";
 import AuthPage from "./pages/AuthPage/AuthPage";
 import MainPage from "./pages/MainPage/MainPage";
-import { ConfigProvider } from "antd";
+import { ConfigProvider, theme } from "antd";
 import AuthProvider from "./context/AuthContext";
-type ThemeData = {
-  borderRadius: number;
-  colorPrimary: string;
-  Button?: {
-    colorPrimary: string;
-    algorithm?: boolean;
-  };
-};
-
-const defaultData: ThemeData = {
-  borderRadius: 6,
-  colorPrimary: "#1677ff",
-  Button: {
-    colorPrimary: "#00B96B",
-  },
-};
 
 function App() {
-  let tokenAnt = defaultData;
-
-  const navigate = useNavigate();
-
   return (
     <>
       <ConfigProvider
+        direction="ltr"
         theme={{
-          token: tokenAnt,
+          token: {
+            colorBgContainer: "#fff",
+            borderRadius: 10,
+          },
+          components: {
+            Button: {
+              colorBgContainer: "#1890ff",
+            },
+            Input: {
+              colorPrimary: "green",
+            },
+          },
         }}
       >
         <AuthProvider>

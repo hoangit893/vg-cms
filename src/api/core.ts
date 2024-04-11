@@ -21,6 +21,7 @@ export const apiElement = (
           actualPath += `/${params[key]}`;
         });
       }
+      console.log("actualPath", actualPath);
       return axios({
         method,
         baseURL: customBaseUrl ? customBaseUrl : import.meta.env.VITE_BASE_URL,

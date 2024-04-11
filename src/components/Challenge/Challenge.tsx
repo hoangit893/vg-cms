@@ -14,10 +14,11 @@ import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import TextArea from "antd/es/input/TextArea";
 import UploadImage from "../UploadImage/UploadImage";
-import { useAuth } from "../../context/AuthContext";
-
+import Search from "antd/es/input/Search";
+import { Typography } from "antd";
 export default function Challenge() {
   const [challengeList, setChallengeList] = useState([]);
+  const [idTimeout, setIdTimeout] = useState<any>(null);
   const [total, setTotal] = useState(1);
   // const params = useParams();
   const location = useLocation();
@@ -88,13 +89,13 @@ export default function Challenge() {
       title: "Level",
       dataIndex: "level",
       key: "level",
-      width: 50,
+      width: 60,
     },
     {
       title: "Point",
       dataIndex: "point",
       key: "point",
-      width: 50,
+      width: 60,
     },
     {
       title: "Topic",
@@ -171,11 +172,23 @@ export default function Challenge() {
       image: "",
     });
   };
+
   //Fetch data from server
-  const fetchData = async () => {
+  const fetchData = async (search: {
+    challengeName?: string;
+    topicId?: string;
+  }) => {
+    if (search.challengeName) {
+      queries.set("challengeName", search.challengeName);
+    }
+    if (search.topicId) {
+      queries.set("topicId", search.topicId);
+    }
+
     const response = await api.getChallengeList.invoke({
       queries: queries,
     });
+
     if (response.status === 200) {
       setTotal(response.data.total);
       let data = response.data.challengeList.map(
@@ -217,7 +230,7 @@ export default function Challenge() {
   //Fetch data when page load
   useEffect(() => {
     getTopicList();
-    fetchData();
+    fetchData({});
   }, [currentPage]);
 
   //Handle edit button
@@ -238,7 +251,7 @@ export default function Challenge() {
       notification.success({
         message: "Update challenge success",
       });
-      await fetchData();
+      await fetchData({});
       setIsModalVisible(false);
     } catch (error) {
       console.error("Error updating topic:", error);
@@ -256,7 +269,7 @@ export default function Challenge() {
       await api.createChallenge.invoke({
         data: currentRecord,
       });
-      await fetchData();
+      await fetchData({});
       notification.success({
         message: "Create challenge success",
       });
@@ -277,7 +290,7 @@ export default function Challenge() {
           challengeId: record.challengeId,
         },
       });
-      await fetchData();
+      await fetchData({});
       setDeleteConfirm(false);
       notification.success({
         message: "Delete challenge success",
@@ -287,6 +300,7 @@ export default function Challenge() {
     }
   };
   const handleCancel = () => {
+    console.log(queries);
     setIsModalVisible(false);
   };
 
@@ -294,21 +308,48 @@ export default function Challenge() {
     form.resetFields();
   }, [isModalVisible]);
 
+  const height = window.innerHeight - 300;
+
   return (
     <>
-      <Button
-        onClick={() => handleAddButton()}
-        type="dashed"
-        style={{
-          margin: 16,
-        }}
-        className="float-left"
-      >
-        Add new challenge
-      </Button>
+      <div className="tool__bar ">
+        <Typography.Title level={2}>CHALLENGE MANAGEMANT</Typography.Title>
+        <Flex gap={100} className="mb-9">
+          <Search
+            placeholder="Search topic"
+            allowClear
+            enterButton="Search"
+            size="large"
+            onChange={async (e) => {
+              if (idTimeout) {
+                clearTimeout(idTimeout);
+              }
+              setIdTimeout(
+                setTimeout(async () => {
+                  fetchData({ challengeName: e.target.value });
+                }, 100)
+              );
+            }}
+          />
+
+          <Button
+            style={{
+              backgroundColor: "#1890ff",
+              width: "150px",
+              height: "40px",
+            }}
+            type="primary"
+            className="float-left"
+            onClick={() => handleAddButton()}
+          >
+            Add new challenge
+          </Button>
+        </Flex>
+      </div>
+
       <Table
         size="middle"
-        virtual
+        scroll={{ y: height }}
         columns={columns}
         dataSource={challengeList}
         pagination={{

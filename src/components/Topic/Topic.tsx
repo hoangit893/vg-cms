@@ -1,11 +1,23 @@
 import { useEffect, useState } from "react";
-import { Button, Flex, Table, Modal, Form, Input, notification } from "antd";
+import {
+  Button,
+  Flex,
+  Table,
+  Modal,
+  Form,
+  Input,
+  notification,
+  Typography,
+} from "antd";
 import api from "../../api/index";
 import TextArea from "antd/es/input/TextArea";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import UploadImage from "../UploadImage/UploadImage";
+import Search from "antd/es/input/Search";
 export default function Topic() {
+  const [idTimeout, setIdTimeout] = useState<any>(null);
+  const height = window.innerHeight - 360;
   const [form] = Form.useForm();
   const location = useLocation();
   const queries = new URLSearchParams(location.search);
@@ -89,11 +101,12 @@ export default function Topic() {
     ],
   };
 
-  const fetchData = async () => {
+  const fetchData = async (queries: object) => {
     try {
       await api.getTopic
         .invoke({
           queries: {
+            ...queries,
             page: currentPage,
             pageSize: pageSize,
           },
@@ -156,7 +169,7 @@ export default function Topic() {
           notification.success({
             message: "Create topic success",
           });
-          fetchData();
+          fetchData({});
           setIsModalVisible(false);
         } catch (error: any) {
           notification.error({
@@ -190,7 +203,7 @@ export default function Topic() {
             notification.success({
               message: "Update topic success",
             });
-            fetchData();
+            fetchData({});
           }
           setIsModalVisible(false);
         } catch (error: any) {
@@ -217,7 +230,7 @@ export default function Topic() {
       notification.success({
         message: "Delete topic success",
       });
-      fetchData();
+      fetchData({});
       setDeleteConfirm(false);
     } else {
       notification.error({ message: "Delete topic failed" });
@@ -230,7 +243,7 @@ export default function Topic() {
   };
 
   useEffect(() => {
-    fetchData();
+    fetchData({});
   }, [currentPage, pageSize]);
 
   useEffect(() => {
@@ -249,20 +262,44 @@ export default function Topic() {
 
   return (
     <>
-      <Button
-        onClick={handleAddNew}
-        type="dashed"
-        style={{
-          margin: 16,
-        }}
-        className="float-left"
-      >
-        Add new topic
-      </Button>
+      <div className="tool__bar ">
+        <Typography.Title level={2}>TOPIC MANAGEMENT</Typography.Title>
+        <Flex gap={100} className="mb-9">
+          <Search
+            placeholder="Search topic"
+            allowClear
+            enterButton="Search"
+            size="large"
+            onChange={async (e) => {
+              if (idTimeout) {
+                clearTimeout(idTimeout);
+              }
+              setIdTimeout(
+                setTimeout(async () => {
+                  fetchData({ topicName: e.target.value });
+                }, 100)
+              );
+            }}
+          />
+          <Button
+            onClick={handleAddNew}
+            style={{
+              backgroundColor: "#1890ff",
+              width: "150px",
+              height: "40px",
+            }}
+            type="primary"
+            className="float-left"
+          >
+            Add new topic
+          </Button>
+        </Flex>
+      </div>
+
       <Table
+        scroll={{ y: height }}
         tableLayout="auto"
         size="middle"
-        virtual
         columns={columns}
         dataSource={processedData}
         pagination={{
