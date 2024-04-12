@@ -4,14 +4,18 @@ import { useNavigate } from "react-router-dom";
 
 const AuthContext = React.createContext({
   isAuthenticated: false,
-  setIsAuthenticated: (value: boolean) => {},
+  setIsAuthenticated: (value: boolean) => {
+    console.log(value);
+  },
   user: {
     username: "",
     name: "",
     avatarImg: "",
     role: "guest",
   },
-  setUser: (value: any) => {},
+  setUser: (value: any) => {
+    console.log(value);
+  },
 });
 
 export function useAuth() {

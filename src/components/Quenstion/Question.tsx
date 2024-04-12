@@ -269,23 +269,28 @@ export default function Question() {
     ],
   };
 
+  const height = window.innerHeight - 360;
   return (
     <>
-      <Button
-        onClick={() => handleAddButton()}
-        type="primary"
-        style={{
-          backgroundColor: "#1890ff",
-          width: "150px",
-          height: "40px",
-          marginBottom: "30px",
-        }}
-        className="float-left"
-      >
-        Add new question
-      </Button>
+      <div className="tool-bar ">
+        <Typography.Title level={2}>QUESTION MANAGEMANT</Typography.Title>
+        <Flex gap={100} className="mb-9">
+          <Button
+            onClick={() => handleAddButton()}
+            type="primary"
+            style={{
+              backgroundColor: "#1890ff",
+              width: "150px",
+              height: "40px",
+            }}
+          >
+            Add new question
+          </Button>
+        </Flex>
+      </div>
+
       <Table
-        scroll={{ y: 300 }}
+        scroll={{ y: height }}
         size="middle"
         virtual
         columns={columns}
@@ -294,6 +299,10 @@ export default function Question() {
           pageSize: pageSize,
           total: total,
           position: ["bottomCenter"],
+          showSizeChanger: true,
+          onShowSizeChange: (current, size) => {
+            setPageSize(size);
+          },
           onChange: (page, pageSize) => {
             setCurrentPage(page);
             setPageSize(pageSize);

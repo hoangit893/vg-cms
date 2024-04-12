@@ -1,10 +1,10 @@
-import { Avatar, Dropdown, Flex, Menu, Space, Typography } from "antd";
-import { DownOutlined, UserOutlined } from "@ant-design/icons";
-import { Link, useNavigate } from "react-router-dom";
+import { Avatar, Dropdown, Flex, Menu, Typography } from "antd";
+import { DownOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 export default function HeaderComponent() {
-  const { isAuthenticated, setIsAuthenticated, user } = useAuth();
+  const { setIsAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const handleLogout = () => {
     localStorage.removeItem("AccessToken");

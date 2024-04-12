@@ -1,8 +1,8 @@
-import { Routes, Route, redirect, useNavigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import AuthPage from "./pages/AuthPage/AuthPage";
 import MainPage from "./pages/MainPage/MainPage";
-import { ConfigProvider, theme } from "antd";
+import { ConfigProvider } from "antd";
 import AuthProvider from "./context/AuthContext";
 
 function App() {
@@ -20,7 +20,7 @@ function App() {
               colorBgContainer: "#1890ff",
             },
             Input: {
-              colorPrimary: "green",
+              colorPrimary: "#1890ff",
             },
           },
         }}

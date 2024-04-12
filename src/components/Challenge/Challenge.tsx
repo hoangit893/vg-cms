@@ -76,7 +76,13 @@ export default function Challenge() {
               ? record.imageUrl
               : "https://via.placeholder.com/150"
           }
-          style={{ width: 100, height: 100 }}
+          style={{
+            width: "100px",
+            height: "100px",
+            objectFit: "cover",
+            objectPosition: "center",
+            borderRadius: "0%",
+          }}
         />
       ),
     },
@@ -308,15 +314,16 @@ export default function Challenge() {
     form.resetFields();
   }, [isModalVisible]);
 
-  const height = window.innerHeight - 300;
+  const height = window.innerHeight - 360;
 
   return (
     <>
-      <div className="tool__bar ">
+      <div className="tool-bar ">
         <Typography.Title level={2}>CHALLENGE MANAGEMANT</Typography.Title>
         <Flex gap={100} className="mb-9">
           <Search
-            placeholder="Search topic"
+            className="search-box"
+            placeholder="Search challenge"
             allowClear
             enterButton="Search"
             size="large"
@@ -356,6 +363,7 @@ export default function Challenge() {
           pageSize: pageSize,
           total: total,
           position: ["bottomCenter"],
+          showQuickJumper: true,
           onChange: (page, pageSize) => {
             setCurrentPage(page);
             setPageSize(pageSize);

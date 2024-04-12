@@ -8,6 +8,7 @@ import {
   Input,
   notification,
   Typography,
+  Pagination,
 } from "antd";
 import api from "../../api/index";
 import TextArea from "antd/es/input/TextArea";
@@ -60,7 +61,13 @@ export default function Topic() {
               ? record.imageUrl
               : "https://via.placeholder.com/150"
           }
-          style={{ width: 100, height: 100 }}
+          style={{
+            width: "100px",
+            height: "100px",
+            objectFit: "cover",
+            objectPosition: "center",
+            borderRadius: "0%",
+          }}
         />
       ),
     },
@@ -266,6 +273,7 @@ export default function Topic() {
         <Typography.Title level={2}>TOPIC MANAGEMENT</Typography.Title>
         <Flex gap={100} className="mb-9">
           <Search
+            className="search-box"
             placeholder="Search topic"
             allowClear
             enterButton="Search"
