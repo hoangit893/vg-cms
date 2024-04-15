@@ -180,6 +180,7 @@ export default function Question() {
   };
 
   const editQuestion = async () => {
+    console.log(currentRecord);
     form
       .validateFields()
       .then(async () => {
@@ -220,6 +221,7 @@ export default function Question() {
   };
 
   const createQuestion = async () => {
+    console.log(currentRecord);
     form
       .validateFields()
       .then(async () => {
@@ -351,7 +353,7 @@ export default function Question() {
       <Modal
         title={formTitle}
         open={isModalVisible}
-        onOk={formTitle === "Thêm câu hỏi mới" ? createQuestion : editQuestion}
+        onOk={formTitle == "Thêm câu hỏi mới" ? createQuestion : editQuestion}
         onCancel={handleCancel}
         okButtonProps={{
           type: "dashed",
