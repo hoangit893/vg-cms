@@ -176,11 +176,11 @@ export default function Challenge() {
         required: true,
         message: "Điểm không được để trống",
       },
-      {
-        type: "number",
-        min: 1,
-        message: "Điểm phải lớn hơn 0",
-      },
+      // {
+      //   type: "number",
+      //   min: 1,
+      //   message: "Điểm phải lớn hơn 0",
+      // },
     ],
     topicId: [
       {
