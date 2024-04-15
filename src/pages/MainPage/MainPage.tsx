@@ -28,7 +28,6 @@ const MainPage = () => {
       window.location.href = "/login";
     }
   }, []);
-
   return (
     <>
       <Layout
