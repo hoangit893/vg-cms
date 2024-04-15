@@ -1,21 +1,18 @@
-import { useEffect } from "react";
 import LoginForm from "../../components/LoginForm/LoginForm";
-import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 
 export default function AuthPage() {
-  const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/topic");
-    }
-  }, []);
-
   return (
     <>
-      <div className="auth__form container mx-auto">
+      <div
+        style={{
+          margin: "auto",
+          display: "flex",
+          justifyContent: "center",
+          backgroundColor: "#f0f2f5",
+          height: "100vh",
+        }}
+        className="auth__form "
+      >
         <LoginForm />
       </div>
     </>

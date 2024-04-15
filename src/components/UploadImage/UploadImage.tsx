@@ -65,7 +65,7 @@ export default function UploadImage(props: any) {
         )}
 
         <Upload {...prop}>
-          <Button icon={<UploadOutlined />}>Upload</Button>
+          <Button icon={<UploadOutlined />}>Tải lên</Button>
         </Upload>
       </Flex>
     </>

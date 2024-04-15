@@ -9,6 +9,8 @@ import {
   Input,
   Select,
   notification,
+  Row,
+  Col,
 } from "antd";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
@@ -16,6 +18,11 @@ import TextArea from "antd/es/input/TextArea";
 import UploadImage from "../UploadImage/UploadImage";
 import Search from "antd/es/input/Search";
 import { Typography } from "antd";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 export default function Challenge() {
   const [challengeList, setChallengeList] = useState([]);
   const [idTimeout, setIdTimeout] = useState<any>(null);
@@ -45,16 +52,28 @@ export default function Challenge() {
     Number(queries.get("pageSize")) || 10
   );
 
+  const notifyError = (message: string) => {
+    notification.error({
+      message: message,
+    });
+  };
+
+  const notifySuccess = (message: string) => {
+    notification.success({
+      message: message,
+    });
+  };
+
   //Collums for table
   const columns = [
     {
-      title: "ID",
+      title: "STT",
       dataIndex: "key",
       key: "index",
       width: 100,
     },
     {
-      title: "Name",
+      title: "Tên thử thách",
       dataIndex: "challengeName",
       render: (_: any, record: any) => {
         return (
@@ -66,7 +85,7 @@ export default function Challenge() {
       width: 180,
     },
     {
-      title: "Image",
+      title: "Ảnh minh họa",
       key: "image",
       width: 200,
       render: (_: any, record: any) => (
@@ -87,35 +106,35 @@ export default function Challenge() {
       ),
     },
     {
-      title: "Description",
+      title: "Mô tả thử thách",
       dataIndex: "description",
       key: "description",
     },
     {
-      title: "Level",
+      title: "Độ khó",
       dataIndex: "level",
       key: "level",
-      width: 60,
+      width: 100,
     },
     {
-      title: "Point",
+      title: "Điểm",
       dataIndex: "point",
       key: "point",
-      width: 60,
+      width: 80,
     },
     {
-      title: "Topic",
+      title: "Chủ đề",
       dataIndex: "topicName",
       key: "topicName",
       width: 100,
     },
     {
-      title: "Action",
+      title: "Hành động",
       key: "action",
       render: (_: any, record: any) => (
         <Flex vertical gap={10}>
           <Button type="default" onClick={() => handleEditButton(record)}>
-            Edit
+            <EditOutlined />
           </Button>
           <Button
             type="primary"
@@ -125,7 +144,7 @@ export default function Challenge() {
             }}
             danger
           >
-            Delete
+            <DeleteOutlined />
           </Button>
         </Flex>
       ),
@@ -137,25 +156,30 @@ export default function Challenge() {
     challengeName: [
       {
         required: true,
-        message: "Please input challenge name",
+        message: "Tên thử thách không được để trống",
       },
     ],
     description: [
       {
         required: true,
-        message: "Please input description",
+        message: "Mô tả thử thách không được để trống",
       },
     ],
     level: [
       {
         required: true,
-        message: "Please select level",
+        message: "Độ khó không được để trống",
       },
     ],
     point: [
       {
         required: true,
-        message: "Please input point",
+        message: "Điểm không được để trống",
+      },
+      {
+        type: "number",
+        min: 1,
+        message: "Điểm phải lớn hơn 0",
       },
     ],
     topicId: [
@@ -219,7 +243,7 @@ export default function Challenge() {
   };
 
   const getTopicList = async () => {
-    const response = await api.getTopic.invoke({});
+    const response = await api.getAllTopic.invoke({});
     if (response.status === 200) {
       let data = response.data.topics.map((topic: any) => {
         return {
@@ -241,7 +265,7 @@ export default function Challenge() {
 
   //Handle edit button
   const handleEditButton = (record: any) => {
-    setFormTitle("Edit Challenge");
+    setFormTitle("Cập nhật thử thách");
     setCurrentRecord(record);
     setIsModalVisible(true);
   };
@@ -254,18 +278,17 @@ export default function Challenge() {
         },
         data: currentRecord,
       });
-      notification.success({
-        message: "Update challenge success",
-      });
+      notifySuccess("Cập nhật thử thách thành công");
       await fetchData({});
       setIsModalVisible(false);
     } catch (error) {
-      console.error("Error updating topic:", error);
+      notifyError("Cập nhật thử thách không thành công");
+      console.error("Cập nhật thử thách không thành công", error);
     }
   };
 
   const handleAddButton = () => {
-    setFormTitle("Add New Challenge");
+    setFormTitle("Tạo thử thách mới");
     setIsModalVisible(true);
     resetRecord();
   };
@@ -276,16 +299,12 @@ export default function Challenge() {
         data: currentRecord,
       });
       await fetchData({});
-      notification.success({
-        message: "Create challenge success",
-      });
+      notifySuccess("Tạo thử thách thành công");
 
       setIsModalVisible(false);
     } catch (error: any) {
       console.log(error);
-      notification.error({
-        message: error.response.data.error,
-      });
+      notifyError("Tạo thử thách không thành công");
     }
   };
 
@@ -298,10 +317,9 @@ export default function Challenge() {
       });
       await fetchData({});
       setDeleteConfirm(false);
-      notification.success({
-        message: "Delete challenge success",
-      });
+      notifySuccess("Xoá thử thách thành công");
     } catch (error) {
+      notifyError("Xoá thử thách không thành công");
       console.error("Error deleting challenge:", error);
     }
   };
@@ -318,30 +336,59 @@ export default function Challenge() {
 
   return (
     <>
-      <div className="tool-bar ">
-        <Typography.Title level={2}>CHALLENGE MANAGEMANT</Typography.Title>
-        <Flex gap={100} className="mb-9">
-          <Search
-            className="search-box"
-            placeholder="Search challenge"
-            allowClear
-            enterButton="Search"
-            size="large"
-            onChange={async (e) => {
-              if (idTimeout) {
-                clearTimeout(idTimeout);
-              }
-              setIdTimeout(
-                setTimeout(async () => {
-                  fetchData({ challengeName: e.target.value });
-                }, 100)
-              );
-            }}
-          />
+      <div
+        className="tool-bar "
+        style={{
+          textAlign: "center",
+        }}
+      >
+        <Typography.Title level={2}>Quản lí thử thách</Typography.Title>
+        <Row className="mb-9" justify="space-between" wrap={false}>
+          <Flex gap={10}>
+            <Col>
+              <Search
+                style={{
+                  maxWidth: "400px",
+                }}
+                className="search-box"
+                placeholder="Tìm kiếm thử thách"
+                allowClear
+                enterButton={<SearchOutlined />}
+                size="large"
+                onChange={async (e) => {
+                  if (idTimeout) {
+                    clearTimeout(idTimeout);
+                  }
+                  setIdTimeout(
+                    setTimeout(async () => {
+                      fetchData({ challengeName: e.target.value });
+                    }, 100)
+                  );
+                }}
+              />
+            </Col>
+
+            <Select
+              placeholder="Chọn chủ đề"
+              style={{
+                height: "40px",
+                width: "200px",
+              }}
+              options={topicList.map((topic: any) => {
+                return {
+                  value: topic.topicId,
+                  label: topic.topicName,
+                };
+              })}
+              allowClear
+              onChange={async (value) => {
+                fetchData({ topicId: value });
+              }}
+            />
+          </Flex>
 
           <Button
             style={{
-              backgroundColor: "#1890ff",
               width: "150px",
               height: "40px",
             }}
@@ -349,9 +396,9 @@ export default function Challenge() {
             className="float-left"
             onClick={() => handleAddButton()}
           >
-            Add new challenge
+            Tạo thử thách mới
           </Button>
-        </Flex>
+        </Row>
       </div>
 
       <Table
@@ -374,23 +421,29 @@ export default function Challenge() {
         title={formTitle}
         open={isModalVisible}
         onOk={
-          formTitle === "Add New Challenge" ? createChallenge : editChallenge
+          formTitle === "Tạo thử thách mới" ? createChallenge : editChallenge
         }
         onCancel={handleCancel}
         okButtonProps={{
-          type: "dashed",
+          type: "primary",
         }}
         destroyOnClose
+        okText={
+          formTitle === "Tạo thử thách mới"
+            ? "Tạo thử thách"
+            : "Cập nhật thử thách"
+        }
+        cancelText="Huỷ bỏ"
       >
         <Form layout="vertical" form={form}>
           <Form.Item
             rules={formRules.challengeName}
-            label="Name"
+            label="Tên thử thách"
             name="challengeName"
             initialValue={currentRecord.challengeName}
           >
             <Input
-              placeholder="Challenge name"
+              placeholder="Tên thử thách"
               onChange={(e) => {
                 setCurrentRecord({
                   ...currentRecord,
@@ -401,13 +454,13 @@ export default function Challenge() {
             />
           </Form.Item>
           <Form.Item
-            rules={formRules.description}
-            label="Topic"
+            rules={formRules.topicId}
+            label="Chủ đề"
             name="topicId"
             initialValue={currentRecord.topicId}
           >
             <Select
-              placeholder="Select topic"
+              placeholder="Chủ đề"
               allowClear
               onChange={(value) => {
                 setCurrentRecord({ ...currentRecord, topicId: value });
@@ -425,13 +478,13 @@ export default function Challenge() {
           <Flex gap={10} justify="left">
             <Form.Item
               style={{ width: "50%" }}
-              label="Level"
+              label="Đó khó"
               name="level"
               rules={formRules.level}
-              initialValue={currentRecord.level}
+              initialValue={currentRecord.level ?? "easy"}
             >
               <Select
-                placeholder="Select level"
+                placeholder="Độ khó"
                 allowClear
                 onChange={(value) => {
                   console.log(value);
@@ -440,31 +493,31 @@ export default function Challenge() {
                 options={[
                   {
                     value: "easy",
-                    label: "Easy",
+                    label: "Dễ",
                     isSelected: currentRecord.level === "easy" ? true : false,
                   },
                   {
                     value: "medium",
-                    label: "Medium",
+                    label: "Trung bình",
                     isSelected: currentRecord.level === "medium" ? true : false,
                   },
                   {
                     value: "hard",
-                    label: "Hard",
+                    label: "Khó",
                     isSelected: currentRecord.level === "hard" ? true : false,
                   },
                 ]}
               ></Select>
             </Form.Item>
             <Form.Item
+              // rules={formRules.point}
               style={{ width: "50%" }}
-              label="Point"
+              label="Điểm"
               name="point"
-              rules={formRules.point}
               initialValue={currentRecord.point}
             >
               <Input
-                placeholder="Point"
+                placeholder="Điểm của thử thách"
                 type="number"
                 onChange={(e) =>
                   setCurrentRecord({
@@ -476,7 +529,7 @@ export default function Challenge() {
             </Form.Item>
           </Flex>
           <Form.Item
-            label="Image"
+            label="Ảnh minh họa"
             name="image"
             initialValue={currentRecord.image}
           >
@@ -488,7 +541,8 @@ export default function Challenge() {
             ></UploadImage>
           </Form.Item>
           <Form.Item
-            label="Description"
+            label="Mô tả thử thách"
+            rules={formRules.description}
             name="description"
             initialValue={currentRecord.description}
           >
@@ -496,7 +550,7 @@ export default function Challenge() {
               style={{
                 resize: "inherit",
               }}
-              placeholder="Description"
+              placeholder="Mô tả thử thách"
               allowClear
               onChange={(e) =>
                 setCurrentRecord({
@@ -509,20 +563,28 @@ export default function Challenge() {
         </Form>
       </Modal>
       <Modal
-        title="Delete"
+        title="Xoá thử thách"
         open={deleteConfirm}
         onOk={() => {
           deleteChallenge(currentRecord);
         }}
+        okText="Xác nhận xoá"
         onCancel={() => {
           setDeleteConfirm(false);
         }}
-        okText="Delete"
+        cancelText="Huỷ bỏ"
         okButtonProps={{
           danger: true,
         }}
       >
-        <p>Are you sure you want to delete this record?</p>
+        <p>Bạn có chắc chắn muốn xoá thử thách này ?</p>
+        <p
+          style={{
+            color: "red",
+          }}
+        >
+          ** Các câu hỏi liên quan đến thử thách cũng sẽ bị xoá
+        </p>
       </Modal>
     </>
   );

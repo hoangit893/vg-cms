@@ -1,28 +1,24 @@
-import { useEffect, useState } from "react";
-import { Button, Layout, theme, Typography } from "antd";
+import { useState } from "react";
+import { Layout, Typography } from "antd";
 import "./MainPage.css";
 import { Header } from "antd/es/layout/layout";
 import SideBar from "../../components/SideBar/SideBar";
 import ContentSide from "../../components/ContentSide/ContentSide";
 import HeaderComponent from "../../components/HeaderComponent/HeaderComponent";
-import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import {
+  LeftSquareOutlined,
+  MacCommandOutlined,
+  RightSquareOutlined,
+} from "@ant-design/icons";
 const { Sider, Content } = Layout;
 
 const MainPage = () => {
-  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
 
-  const { isAuthenticated } = useAuth();
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate("/login");
-    }
-  }, [isAuthenticated]);
+  const siderStyle: React.CSSProperties = {
+    color: "#b44445",
+    textAlign: "center",
+  };
 
   return (
     <>
@@ -33,38 +29,58 @@ const MainPage = () => {
         }}
       >
         <Sider
+          theme="light"
           width="15%"
           style={{
             height: "100vh",
             position: "sticky",
             top: 0,
+            textAlign: "center",
           }}
           collapsed={collapsed}
           onCollapse={(value) => {
             setCollapsed(value);
           }}
         >
-          <Typography.Title style={{ marginTop: 20, color: "white" }}>
-            ADMIN
+          <Typography.Title
+            style={{
+              color: "#b44445",
+              textAlign: "center",
+              marginTop: "20px",
+            }}
+          >
+            <MacCommandOutlined />
           </Typography.Title>
           <div className="side__bar mt-12">
             <SideBar />
           </div>
-          <Button
-            onClick={() => setCollapsed(!collapsed)}
+          <div
+            className="collapse-bt text-2xl sticky"
             style={{
-              color: colorBgContainer,
+              bottom: 30,
+              position: "absolute",
+              width: "100%",
             }}
           >
-            hide
-          </Button>
+            {collapsed ? (
+              <RightSquareOutlined
+                style={siderStyle}
+                onClick={() => setCollapsed(!collapsed)}
+              />
+            ) : (
+              <LeftSquareOutlined
+                style={siderStyle}
+                onClick={() => setCollapsed(!collapsed)}
+              />
+            )}
+          </div>
         </Sider>
         <Layout>
           <Header className="m-5 mb-0 bg-transparent">
             <HeaderComponent />
           </Header>
           <Content className="bg-E5E5E5">
-            <div className="relative m-7">
+            <div className="relative mx-7 my-2">
               <ContentSide />
             </div>
           </Content>

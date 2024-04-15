@@ -11,6 +11,12 @@ import { Link } from "react-router-dom";
 
 export default function SideBar() {
   type MenuItem = Required<MenuProps>["items"][number];
+  const path = window.location.pathname;
+
+  let activeKey = path.split("/")[1];
+  if (activeKey === "") {
+    activeKey = "dashboard";
+  }
 
   function getItem(
     label: React.ReactNode,
@@ -30,28 +36,28 @@ export default function SideBar() {
 
   const items: MenuItem[] = [
     getItem(
-      <Link to="/home">Dashboard</Link>,
+      <Link to="/">Bảng thông tin</Link>,
       "dashboard",
       <AppstoreOutlined />
     ),
-    getItem(<Link to="/topic">Topic</Link>, "topic", <ApartmentOutlined />),
+    getItem(<Link to="/topic">Chủ đề</Link>, "topic", <ApartmentOutlined />),
     getItem(
-      <Link to="/challenge">Challenge</Link>,
+      <Link to="/challenge">Thử thách</Link>,
       "challenge",
       <BookOutlined />
     ),
-    getItem(<Link to="/question">Question</Link>, "question", <BookOutlined />),
-    getItem(<Link to="/user">User</Link>, "user", <UserOutlined />),
+    getItem(<Link to="/question">Câu hỏi</Link>, "question", <BookOutlined />),
+    getItem(<Link to="/user">Người chơi</Link>, "user", <UserOutlined />),
   ];
 
   return (
     <>
       <Flex vertical>
         <Menu
-          defaultSelectedKeys={["dashboard"]}
+          defaultSelectedKeys={[activeKey]}
           mode="inline"
           items={items}
-          theme="dark"
+          // theme="dark"
         ></Menu>
       </Flex>
     </>

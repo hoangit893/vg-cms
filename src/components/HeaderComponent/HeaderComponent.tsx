@@ -2,6 +2,8 @@ import { Avatar, Dropdown, Flex, Menu, Typography } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useEffect, useState } from "react";
+import api from "../../api";
 
 export default function HeaderComponent() {
   const { setIsAuthenticated, user } = useAuth();
@@ -15,17 +17,27 @@ export default function HeaderComponent() {
   const menu = (
     <Menu>
       <Menu.Item key="0">
-        <a href="/profile">Profile</a>
+        <a href="/profile">Thông tin cá nhân</a>
       </Menu.Item>
       <Menu.Item key="1">
-        <a href="/settings">Settings</a>
+        <a href="/settings">Cài đặt</a>
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item key="3" onClick={handleLogout}>
-        Logout
+        Đăng xuất
       </Menu.Item>
     </Menu>
   );
+
+  const [activeUser, setActiveUser] = useState(0);
+  useEffect(() => {
+    const getActiveUser = async () => {
+      const response = await api.getActiveUser.invoke({});
+      setActiveUser(response.data.activeUser);
+    };
+    getActiveUser();
+  }, []);
+
   return (
     <>
       <Flex justify="space-between" className="text-black ">
@@ -35,7 +47,18 @@ export default function HeaderComponent() {
               color: "black",
               fontSize: "1.4rem",
             }}
-          >{`Hello, ${user.name}`}</Typography>
+          >{`Xin chào, ${user.name}`}</Typography>
+        </Flex>
+        <Flex vertical={false} className="right__side" gap={20} align="center">
+          <Typography.Text
+            style={{
+              borderRadius: "10px",
+              padding: "10px",
+              backgroundColor: "white",
+              color: "black",
+              fontSize: "1rem",
+            }}
+          >{`Người dùng đang hoạt động : ${activeUser}`}</Typography.Text>
         </Flex>
         <Flex vertical={false} className="right__side" gap={20} align="center">
           <Avatar size="large" src={user.avatarImg}></Avatar>
@@ -57,7 +80,7 @@ export default function HeaderComponent() {
                 fontWeight: "normal",
               }}
             >
-              {user.role}
+              {user.role === "admin" ? "Quản trị viên" : "Khách"}
             </Typography.Text>
           </Flex>
           <Dropdown overlay={menu} trigger={["hover"]}>

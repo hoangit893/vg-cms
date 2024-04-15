@@ -14,6 +14,7 @@ import {
 // import { useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import AnswerForm from "../AnswerForm/AnswerForm";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 export default function Question() {
   const [questionList, setQuestionList] = useState([]);
@@ -31,6 +32,7 @@ export default function Question() {
     challengeId: "",
     challengeName: "",
   });
+  const [selectedChallenge, setSelectedChallenge] = useState<any>({});
 
   const [challengeList, setChallengeList] = useState([]);
   const [formTitle, setFormTitle] = useState("");
@@ -42,34 +44,45 @@ export default function Question() {
     Number(queries.get("pageSize")) || 10
   );
 
+  const NotifySuccess = (message: string) => {
+    notification.success({
+      message: message,
+    });
+  };
+
+  const NotifyError = (message: string) => {
+    notification.error({
+      message: message,
+    });
+  };
   //Collums for table
   const columns = [
     {
-      title: "ID",
+      title: "STT",
       dataIndex: "key",
       key: "index",
       width: 100,
     },
     {
-      title: "Question",
+      title: "Câu hỏi",
       dataIndex: "question",
       key: "question",
       width: "800",
     },
     {
-      title: "Question Type",
+      title: "Loại câu hỏi",
       dataIndex: "type",
       key: "type",
       width: 180,
     },
     {
-      title: "Challenge",
+      title: "Thử thách",
       dataIndex: "challengeName",
       key: "challengeName",
       width: 180,
     },
     {
-      title: "Action",
+      title: "Hành động",
       key: "action",
       render: (_: any, record: any) => (
         <Flex vertical gap={10}>
@@ -79,7 +92,7 @@ export default function Question() {
               handleEditButton(record);
             }}
           >
-            Edit
+            <EditOutlined />
           </Button>
           <Button
             type="primary"
@@ -89,7 +102,7 @@ export default function Question() {
             }}
             danger
           >
-            Delete
+            <DeleteOutlined />
           </Button>
         </Flex>
       ),
@@ -111,7 +124,11 @@ export default function Question() {
   //Fetch data from server
   const fetchData = async () => {
     const response = await api.getQuestionList.invoke({
-      queries: queries,
+      queries: {
+        page: currentPage,
+        pageSize: pageSize,
+        ...selectedChallenge,
+      },
     });
     if (response.status === 200) {
       setTotal(response.data.total);
@@ -134,7 +151,7 @@ export default function Question() {
   };
 
   const getchallengeList = async () => {
-    const response = await api.getChallengeList.invoke({});
+    const response = await api.getAllChallenge.invoke({});
     if (response.status === 200) {
       let data = response.data.challengeList;
       data = data.map((challenge: any) => {
@@ -153,11 +170,11 @@ export default function Question() {
   useEffect(() => {
     getchallengeList();
     fetchData();
-  }, [currentPage]);
+  }, [currentPage, pageSize, selectedChallenge]);
 
   //Handle edit button
   const handleEditButton = (record: any) => {
-    setFormTitle("Edit question");
+    setFormTitle("Cập nhật câu hỏi");
     setCurrentRecord(record);
     setIsModalVisible(true);
   };
@@ -178,26 +195,27 @@ export default function Question() {
               challengeId: currentRecord.challengeId,
             },
           });
-          notification.success({
-            message: "Update challenge success",
-          });
+          NotifySuccess("Cập nhật câu hỏi thành công");
           fetchData();
           resetRecord();
           setIsModalVisible(false);
         } catch (error) {
+          NotifyError("Cập nhật câu hỏi thất bại");
           console.error("Error updating topic:", error);
         }
       })
       .catch((error) => {
-        notification.error({
-          message: error.response.data.message,
-        });
+        NotifyError(error.response.data.message);
       });
   };
 
   const handleAddButton = () => {
-    setFormTitle("Add New Question");
+    setFormTitle("Thêm câu hỏi mới");
     resetRecord();
+    setCurrentRecord({
+      ...currentRecord,
+      challengeId: selectedChallenge.challengeId,
+    });
     setIsModalVisible(true);
   };
 
@@ -208,16 +226,13 @@ export default function Question() {
         await api.createQuestion.invoke({
           data: currentRecord,
         });
-        notification.success({
-          message: "Create question success",
-        });
+
+        NotifySuccess("Thêm câu hỏi thành công");
         await fetchData();
         setIsModalVisible(false);
       })
       .catch((error) => {
-        notification.error({
-          message: error.response.data.message,
-        });
+        NotifyError(error.response.data.message);
       });
   };
 
@@ -228,12 +243,12 @@ export default function Question() {
           questionId: record.questionId,
         },
       });
-      notification.success({
-        message: "Delete question success",
-      });
+
+      NotifySuccess("Xoá câu hỏi thành công");
       await fetchData();
       setDeleteConfirm(false);
     } catch (error: any) {
+      NotifyError(error.response.data.message);
       console.log(error.response.data.message);
     }
   };
@@ -272,19 +287,44 @@ export default function Question() {
   const height = window.innerHeight - 360;
   return (
     <>
-      <div className="tool-bar ">
-        <Typography.Title level={2}>QUESTION MANAGEMANT</Typography.Title>
-        <Flex gap={100} className="mb-9">
+      <div
+        className="tool-bar "
+        style={{
+          textAlign: "center",
+        }}
+      >
+        <Typography.Title level={2}>Quản lí câu hỏi</Typography.Title>
+
+        <Flex gap={100} justify="space-between" className="mb-9">
+          <Select
+            placeholder="Chọn thử thách"
+            style={{
+              height: "40px",
+              width: "400px",
+            }}
+            options={challengeList.map((challenge: any) => {
+              return {
+                value: challenge.challengeId,
+                label: challenge.challengeName,
+              };
+            })}
+            allowClear
+            onChange={async (value, option: any) => {
+              setSelectedChallenge({
+                challengeName: option?.label,
+                challengeId: value,
+              });
+            }}
+          />
           <Button
             onClick={() => handleAddButton()}
             type="primary"
             style={{
-              backgroundColor: "#1890ff",
               width: "150px",
               height: "40px",
             }}
           >
-            Add new question
+            Thêm câu hỏi mới
           </Button>
         </Flex>
       </div>
@@ -292,7 +332,6 @@ export default function Question() {
       <Table
         scroll={{ y: height }}
         size="middle"
-        virtual
         columns={columns}
         dataSource={questionList}
         pagination={{
@@ -300,7 +339,7 @@ export default function Question() {
           total: total,
           position: ["bottomCenter"],
           showSizeChanger: true,
-          onShowSizeChange: (current, size) => {
+          onShowSizeChange: (size) => {
             setPageSize(size);
           },
           onChange: (page, pageSize) => {
@@ -312,7 +351,7 @@ export default function Question() {
       <Modal
         title={formTitle}
         open={isModalVisible}
-        onOk={formTitle === "Add New Question" ? createQuestion : editQuestion}
+        onOk={formTitle === "Thêm câu hỏi mới" ? createQuestion : editQuestion}
         onCancel={handleCancel}
         okButtonProps={{
           type: "dashed",
@@ -322,12 +361,12 @@ export default function Question() {
         <Form layout="vertical" form={form}>
           <Form.Item
             rules={formRules.question}
-            label="Question"
+            label="Câu hỏi"
             name="question"
             initialValue={currentRecord.question}
           >
             <Input
-              placeholder="Question"
+              placeholder="Câu hỏi"
               onChange={(e) => {
                 setCurrentRecord({
                   ...currentRecord,
@@ -338,12 +377,12 @@ export default function Question() {
           </Form.Item>
           <Form.Item
             rules={formRules.challenge}
-            label="Challenge"
+            label="Thử thách"
             name="challenge"
             initialValue={currentRecord.challengeId}
           >
             <Select
-              placeholder="Select challenge"
+              placeholder="Lựa chọn thử thách"
               allowClear
               onChange={(value) => {
                 setCurrentRecord({ ...currentRecord, challengeId: value });
@@ -364,12 +403,12 @@ export default function Question() {
             <Form.Item
               rules={formRules.type}
               style={{ width: "50%" }}
-              label="Question Type"
+              label="Loại câu hỏi"
               name="type"
               initialValue={currentRecord.type}
             >
               <Select
-                placeholder="Select type"
+                placeholder="Lựa chọn loại câu hỏi"
                 allowClear
                 onChange={(value) => {
                   if (value === "arrange") {
@@ -397,19 +436,19 @@ export default function Question() {
                 options={[
                   {
                     value: "single-choice",
-                    label: "Single Answer",
+                    label: "Một đáp án đúng",
                     isSelected:
                       currentRecord.type === "single-choice" ? true : false,
                   },
                   {
                     value: "multi-choice",
-                    label: "Multiple Answer",
+                    label: "Nhiều đáp án đúng",
                     isSelected:
                       currentRecord.type === "multi-choice" ? true : false,
                   },
                   {
                     value: "arrange",
-                    label: "Arrange",
+                    label: "Sắp xếp",
                     isSelected: currentRecord.type === "arrange" ? true : false,
                   },
                 ]}
@@ -418,6 +457,7 @@ export default function Question() {
           </Flex>
 
           <AnswerForm
+            form={form}
             type={currentRecord.type}
             settype={(type: any) => {
               setCurrentRecord({
@@ -433,7 +473,7 @@ export default function Question() {
         </Form>
       </Modal>
       <Modal
-        title="Delete"
+        title="Xác nhận"
         open={deleteConfirm}
         onOk={() => {
           deletionQuestion(currentRecord);
@@ -441,12 +481,13 @@ export default function Question() {
         onCancel={() => {
           setDeleteConfirm(false);
         }}
-        okText="Delete"
+        cancelText="Huỷ"
+        okText="Xác nhận xoá"
         okButtonProps={{
           danger: true,
         }}
       >
-        <p>Are you sure you want to delete this record?</p>
+        <p>Bạn có chắn chắn muốn xoá câu hỏi này ?</p>
       </Modal>
     </>
   );

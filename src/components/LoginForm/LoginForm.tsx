@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-import { Button, Checkbox, Form, Input, notification } from "antd";
+import { Button, Checkbox, Flex, Form, Input, notification } from "antd";
 import api, { setAccessToken } from "../../api";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -17,7 +17,7 @@ export default function LoginForm() {
     password: "",
   });
 
-  const { isAuthenticated, setIsAuthenticated, setUser } = useAuth();
+  const { setIsAuthenticated, setUser } = useAuth();
 
   const nagivate = useNavigate();
   const onFinish = async () => {
@@ -27,37 +27,46 @@ export default function LoginForm() {
     if (response.status === 200) {
       if (response.data.role != "admin") {
         notification.error({
-          message: "Forbidden",
+          message: "Bạn không có quyền truy cập vào trang này",
         });
         return;
       }
       setUser(response.data.user);
       setAccessToken(response.data.token);
       notification.success({
-        message: "Login success",
+        message: "Đăng nhập thành công",
       });
       setIsAuthenticated(true);
       nagivate("/topic");
     } else {
       notification.error({
-        message: "Login failed",
+        message: "Đăng nhập thất bại",
       });
     }
   };
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      nagivate("/topic");
-    }
-  }, [isAuthenticated]);
+  // useEffect(() => {
+  //   if (isAuthenticated) {
+  //     nagivate("/topic");
+  //   }
+  // }, [isAuthenticated]);
 
   return (
     <>
       <Form
+        style={{
+          marginTop: "60px",
+          padding: "30px",
+          backgroundColor: "white",
+          borderRadius: "10px",
+          width: "30%",
+          height: "40%",
+          maxWidth: "400px",
+          maxHeight: "340px",
+        }}
         name="basic"
         // labelCol={{ span: 16 }}
         // wrapperCol={{ span: 16 }}
-        style={{ maxWidth: 600 }}
         layout="vertical"
         initialValues={{ remember: true }}
         onFinish={onFinish}
@@ -66,25 +75,27 @@ export default function LoginForm() {
         className="mx-auto bg-inherit rounded-lg shadow-md"
       >
         <Form.Item<FieldType>
-          label="Username"
+          label="Tên đăng nhập"
           name="username"
           getValueFromEvent={(e) => {
             setCredientials((prev) => ({ ...prev, username: e.target.value }));
             return e.target.value;
           }}
-          rules={[{ required: true, message: "Please input your username!" }]}
+          rules={[
+            { required: true, message: "Tên đăng nhập không được để trống" },
+          ]}
         >
           <Input />
         </Form.Item>
 
         <Form.Item<FieldType>
-          label="Password"
+          label="Mật khẩu "
           name="password"
           getValueFromEvent={(e) => {
             setCredientials((prev) => ({ ...prev, password: e.target.value }));
             return e.target.value;
           }}
-          rules={[{ required: true, message: "Please input your password!" }]}
+          rules={[{ required: true, message: "Mật khẩu không được để trống" }]}
         >
           <Input.Password />
         </Form.Item>
@@ -96,12 +107,11 @@ export default function LoginForm() {
         >
           <Checkbox>Remember me</Checkbox>
         </Form.Item>
-
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+        <Flex justify="center">
           <Button type="primary" htmlType="submit">
-            Submit
+            Đăng nhập
           </Button>
-        </Form.Item>
+        </Flex>
       </Form>
     </>
   );

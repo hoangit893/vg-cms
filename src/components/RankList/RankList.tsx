@@ -1,28 +1,30 @@
-import { Typography } from "antd";
+import { List, Typography } from "antd";
+import { useEffect, useState } from "react";
+import api from "../../api";
 
-export default function RankList(props: any) {
-  let rankList = [
+export default function RankList() {
+  const [rankList, setRankList] = useState<
+    [
+      {
+        _id: string;
+        name: string;
+        totalPoint: number;
+      }
+    ]
+  >([
     {
-      name: "Nguyen Van A",
-      point: 1000,
+      _id: "",
+      name: "",
+      totalPoint: 0,
     },
-    {
-      name: "Nguyen Van B",
-      point: 900,
-    },
-    {
-      name: "Nguyen Van C",
-      point: 800,
-    },
-    {
-      name: "Nguyen Van D",
-      point: 700,
-    },
-    {
-      name: "Nguyen Van E",
-      point: 600,
-    },
-  ];
+  ]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await api.getRankList.invoke({});
+      setRankList(response.data.rankList);
+    };
+    fetchData();
+  }, []);
   return (
     <>
       <div
@@ -34,42 +36,50 @@ export default function RankList(props: any) {
           borderRadius: "10px",
         }}
       >
-        <Typography.Title level={3}>Rank List</Typography.Title>
+        <Typography.Title level={3}>Bảng xếp hạng</Typography.Title>
         <div
           className="rank-item"
           key={39489348}
           style={{
             display: "flex",
-            justifyContent: "space-around",
+            alignContent: "center",
+            justifyContent: "space-between",
             backgroundColor: "#F5F5F5",
             padding: "10px",
             borderRadius: "10px",
             marginBottom: "10px",
           }}
         >
-          <span>#Rank</span>
-          <span>Name</span>
-          <span>Point</span>
+          <span
+            style={{
+              textOverflow: "ellipsis",
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              width: "50%",
+            }}
+          >
+            Người chơi
+          </span>
+          <span>Hạng</span>
         </div>
-        {rankList.map((item, index) => {
-          return (
-            <div
-              className="rank-item"
+        <List>
+          {rankList.map((item, index) => (
+            <List.Item
+              key={item._id}
               style={{
-                display: "flex",
-                justifyContent: "space-around",
-                backgroundColor: "#F5F5F5",
-                padding: "10px",
+                padding: "0.5rem",
                 borderRadius: "10px",
-                marginBottom: "10px",
+                backgroundColor: "#fff",
               }}
             >
-              <span>1</span>
-              <span>Nguyen Van A</span>
-              <span>1000</span>
-            </div>
-          );
-        })}
+              <List.Item.Meta
+                title={item?.name}
+                description={`Điểm số: ${item.totalPoint}`}
+              />
+              <div>{index + 1}</div>
+            </List.Item>
+          ))}
+        </List>
       </div>
     </>
   );

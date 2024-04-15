@@ -1,11 +1,17 @@
 import { Button, Card, Flex, Typography } from "antd";
+import { Link } from "react-router-dom";
 
 export default function ChallengeCard(props: any) {
   const { challenge } = props;
   return (
     <>
       <Card
-        style={{ width: "100%", height: "100%", position: "relative" }}
+        style={{
+          width: "100%",
+          height: "100%",
+          position: "relative",
+          maxWidth: "220px",
+        }}
         hoverable
         cover={
           <img
@@ -26,7 +32,9 @@ export default function ChallengeCard(props: any) {
                 <Typography.Text>{`Level : ${challenge.level}`}</Typography.Text>
                 <Typography.Text>{`Point : ${challenge.point}`}</Typography.Text>
                 <Button style={{ marginTop: "20px", width: "100%" }}>
-                  Thử thách
+                  <Link to={`/question?challengeId=${challenge._id}`}>
+                    Chi tiết
+                  </Link>
                 </Button>
               </Flex>
             </>

@@ -1,36 +1,30 @@
 import { useEffect, useState } from "react";
 import ChallengeCard from "../ChallengeCard/ChallengeCard";
 import api from "../../api";
-import { Button, Col, Row, Typography } from "antd";
-import {
-  BackwardFilled,
-  CaretLeftOutlined,
-  CaretRightOutlined,
-  ForwardFilled,
-} from "@ant-design/icons";
-import { set } from "mongoose";
+import { Col, Row, Typography } from "antd";
+// import { CaretLeftOutlined, CaretRightOutlined } from "@ant-design/icons";
 
 export default function ChallengeList() {
   const [challengeList, setChallengeList] = useState([]);
-  const [total, setTotal] = useState(0);
-  const [query, setQuery] = useState({
-    page: 1,
-    pageSize: 4,
-  });
+  // const [total, setTotal] = useState(0);
+  // const [query, setQuery] = useState({
+  //   page: 1,
+  //   pageSize: 4,
+  // });
   const fetchData = async () => {
-    const response = await api.getChallengeList.invoke({
-      queries: {
-        ...query,
-      },
+    const response = await api.getMostPlayedChallenge.invoke({
+      // queries: {
+      //   ...query,
+      // },
     });
     console.log(response.data.total);
-    setTotal(response.data.total);
-    setChallengeList(response.data.challengeList);
+    // setTotal(response.data.total);
+    setChallengeList(response.data.mostPlayedList);
   };
 
   useEffect(() => {
     fetchData();
-  }, [query]);
+  }, []);
 
   return (
     <div
@@ -42,37 +36,55 @@ export default function ChallengeList() {
         borderRadius: "10px",
       }}
     >
-      <Typography.Title level={3}>Most Challenges</Typography.Title>
+      <Typography.Title level={3}>
+        Thử thách được chơi nhiều nhất
+      </Typography.Title>
 
-      <Row justify="space-between" align="middle">
-        <Col span={1}>
-          <CaretLeftOutlined
+      <Row
+        justify="space-around"
+        align="middle"
+        style={{
+          height: "90%",
+        }}
+      >
+        {/* <Col span={1}>
+          <button
+            disabled={query.page == 1}
             onClick={() => {
               setQuery({ ...query, page: query.page - 1 });
             }}
-            style={{ fontSize: "25px" }}
-          />
-        </Col>
+          >
+            <CaretLeftOutlined style={{ fontSize: "25px" }} />
+          </button>
+        </Col> */}
         {challengeList.map((challenge: any) => {
-          console.log(challenge);
+          console.log(challenge.challenge);
           return (
-            <Col className="challenge-card" span={5}>
-              <ChallengeCard key={challenge._id} challenge={challenge} />
+            <Col
+              className="challenge-card"
+              key={challenge.challenge._id}
+              span={5}
+            >
+              <ChallengeCard challenge={challenge.challenge} />
             </Col>
           );
         })}
-        <Col span={1}>
-          <CaretRightOutlined
+        {/* <Col span={1}>
+          <button
+            key="forward-btn"
             disabled={query.page == Math.ceil(total / query.pageSize)}
             onClick={() => {
               console.log(query.page == Math.ceil(total / query.pageSize));
               setQuery({ ...query, page: query.page + 1 });
             }}
-            style={{
-              fontSize: "25px",
-            }}
-          />
-        </Col>
+          >
+            <CaretRightOutlined
+              style={{
+                fontSize: "25px",
+              }}
+            />
+          </button>
+        </Col> */}
       </Row>
     </div>
   );

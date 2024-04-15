@@ -8,7 +8,6 @@ import {
   Input,
   notification,
   Typography,
-  Pagination,
 } from "antd";
 import api from "../../api/index";
 import TextArea from "antd/es/input/TextArea";
@@ -16,6 +15,11 @@ import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import UploadImage from "../UploadImage/UploadImage";
 import Search from "antd/es/input/Search";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 export default function Topic() {
   const [idTimeout, setIdTimeout] = useState<any>(null);
   const height = window.innerHeight - 360;
@@ -38,20 +42,31 @@ export default function Topic() {
     Number(queries.get("pageSize")) || 10
   );
 
+  const NotifySuccess = (message: string) => {
+    notification.success({
+      message: message,
+    });
+  };
+
+  const NotifyError = (message: string) => {
+    notification.error({
+      message: message,
+    });
+  };
   const columns = [
     {
-      title: "ID",
+      title: "STT",
       dataIndex: "id",
       width: 100,
     },
     {
-      title: "Name",
+      title: "Tên chủ đề",
       dataIndex: "name",
       key: "name",
       width: 200,
     },
     {
-      title: "Image",
+      title: "Ảnh minh hoạ",
       key: "image",
       width: 200,
       render: (_: any, record: any) => (
@@ -72,20 +87,26 @@ export default function Topic() {
       ),
     },
     {
-      title: "Description",
+      title: "Mô tả",
       dataIndex: "description",
       key: "description",
     },
     {
-      title: "Action",
+      title: "Hành động",
       key: "action",
       render: (_: any, record: any) => (
-        <Flex vertical gap={10}>
-          <Button type="default" onClick={() => handleEdit(record)}>
-            Edit
+        <Flex vertical gap={10} justify="center">
+          <Button
+            style={{
+              paddingBottom: "5px",
+            }}
+            type="default"
+            onClick={() => handleEdit(record)}
+          >
+            <EditOutlined />
           </Button>
           <Button type="primary" onClick={() => onDelete(record)} danger>
-            Delete
+            <DeleteOutlined />
           </Button>
         </Flex>
       ),
@@ -97,13 +118,13 @@ export default function Topic() {
     name: [
       {
         required: true,
-        message: "Please input topic name",
+        message: "Hãy nhập tên chủ đề",
       },
     ],
     description: [
       {
         required: true,
-        message: "Please input description",
+        message: "Hãy nhập mô tả chủ đề",
       },
     ],
   };
@@ -142,7 +163,7 @@ export default function Topic() {
   };
 
   const handleEdit = (record: any) => {
-    setFormTitle("Edit Topic");
+    setFormTitle("Chỉnh sửa chủ đề");
     record.name = record.name.props.children;
     setCurrentRecord(record);
     setIsModalVisible(true);
@@ -153,7 +174,7 @@ export default function Topic() {
   };
 
   const handleAddNew = () => {
-    setFormTitle("Add New Topic");
+    setFormTitle("Tạo chủ đề mới");
     setCurrentRecord({
       name: "",
       description: "",
@@ -173,21 +194,16 @@ export default function Topic() {
               imageUrl: currentRecord.imageUrl,
             },
           });
-          notification.success({
-            message: "Create topic success",
-          });
+
+          NotifySuccess("Tạo chủ đề thành công");
           fetchData({});
           setIsModalVisible(false);
         } catch (error: any) {
-          notification.error({
-            message: error.response.data.error,
-          });
+          NotifyError(error.response.data.error);
         }
       })
       .catch(() => {
-        notification.error({
-          message: "Please input all fields",
-        });
+        NotifyError("Hãy điền đầy đủ thông tin chủ đề");
       });
   };
 
@@ -207,22 +223,16 @@ export default function Topic() {
             },
           });
           if (response.status === 200) {
-            notification.success({
-              message: "Update topic success",
-            });
+            NotifySuccess("Cập nhật chủ đề thành công");
             fetchData({});
           }
           setIsModalVisible(false);
         } catch (error: any) {
-          notification.error({
-            message: error.response.data.message,
-          });
+          NotifyError(error.response.data.error);
         }
       })
       .catch(() => {
-        notification.error({
-          message: "Please input all fields",
-        });
+        NotifyError("Hãy điền đầy đủ thông tin chủ đề");
       });
     // Make API call to update record
   };
@@ -234,13 +244,12 @@ export default function Topic() {
       },
     });
     if (response.status === 200) {
-      notification.success({
-        message: "Delete topic success",
-      });
+      NotifySuccess("Xoá chủ đề thành công");
+
       fetchData({});
       setDeleteConfirm(false);
     } else {
-      notification.error({ message: "Delete topic failed" });
+      NotifyError("Xoá chủ đề không thành công");
     }
   };
 
@@ -269,14 +278,19 @@ export default function Topic() {
 
   return (
     <>
-      <div className="tool__bar ">
-        <Typography.Title level={2}>TOPIC MANAGEMENT</Typography.Title>
+      <div
+        className="tool__bar "
+        style={{
+          textAlign: "center",
+        }}
+      >
+        <Typography.Title level={2}>Quản lí chủ đề</Typography.Title>
         <Flex gap={100} className="mb-9">
           <Search
             className="search-box"
-            placeholder="Search topic"
+            placeholder="Tìm kiếm chủ đề"
             allowClear
-            enterButton="Search"
+            enterButton={<SearchOutlined />}
             size="large"
             onChange={async (e) => {
               if (idTimeout) {
@@ -292,14 +306,13 @@ export default function Topic() {
           <Button
             onClick={handleAddNew}
             style={{
-              backgroundColor: "#1890ff",
               width: "150px",
               height: "40px",
             }}
             type="primary"
             className="float-left"
           >
-            Add new topic
+            Tạo chủ đề mới
           </Button>
         </Flex>
       </div>
@@ -324,23 +337,25 @@ export default function Topic() {
       <Modal
         title={formTitle}
         open={isModalVisible}
-        onOk={formTitle === "Add New Topic" ? createTopic : editTopic}
+        onOk={formTitle === "Tạo chủ đề mới" ? createTopic : editTopic}
         onCancel={handleCancel}
+        cancelText="Hủy"
+        okText={formTitle === "Tạo chủ đề mới" ? "Tạo" : "Cập nhật"}
         destroyOnClose
         okButtonProps={{
-          type: "dashed",
+          type: "primary",
         }}
       >
         <Form layout="vertical" form={form}>
           <Form.Item
-            label="Name"
+            label="Tên chủ đề"
             name="name"
             rules={formRules.name}
             initialValue={currentRecord.name}
           >
-            <Input placeholder="Topic name" onChange={onNameChange} />
+            <Input placeholder="Tên chủ đề" onChange={onNameChange} />
           </Form.Item>
-          <Form.Item label="Image" name="image">
+          <Form.Item label="Ảnh minh hoạ" name="image">
             <UploadImage
               isModalVisible={isModalVisible}
               record={currentRecord}
@@ -351,7 +366,7 @@ export default function Topic() {
             ></UploadImage>
           </Form.Item>
           <Form.Item
-            label="Description"
+            label="Mô tả"
             name="description"
             initialValue={currentRecord.description}
             rules={formRules.description}
@@ -360,7 +375,7 @@ export default function Topic() {
               style={{
                 resize: "inherit",
               }}
-              placeholder="Description"
+              placeholder="Mô tả chủ đề"
               allowClear
               onChange={onChangeDescription}
             />
@@ -368,7 +383,7 @@ export default function Topic() {
         </Form>
       </Modal>
       <Modal
-        title="Delete"
+        title="Xác nhận xoá chủ đề"
         open={deleteConfirm}
         onOk={() => {
           deleteTopic(currentRecord);
@@ -376,12 +391,20 @@ export default function Topic() {
         onCancel={() => {
           setDeleteConfirm(false);
         }}
-        okText="Delete"
+        cancelText="Hủy"
+        okText="Xoá"
         okButtonProps={{
           danger: true,
         }}
       >
-        <p>Are you sure you want to delete this record?</p>
+        <p>Bạn có muốn xoá chủ đề không ?</p>
+        <p
+          style={{
+            color: "red",
+          }}
+        >
+          * Các thử thách thuộc chủ đề này cũng sẽ bị xoá !{" "}
+        </p>
       </Modal>
     </>
   );

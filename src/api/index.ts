@@ -29,6 +29,14 @@ const api = {
   updateQuestion: apiElement("PUT", "/question/update"),
   deleteQuestion: apiElement("DELETE", "/question/delete"),
   auth: apiElement("GET", "/user/auth"),
+  getRankList: apiElement("GET", "/challenge/rank"),
+  getStatistics: apiElement("GET", "/challenge/statistics"),
+  getActiveUser: apiElement("GET", "/user/active"),
+  getAllChallenge: apiElement("GET", "/challenge/all"),
+  getAllTopic: apiElement("GET", "/topic/all"),
+  getMostPlayedChallenge: apiElement("GET", "/challenge/most-played"),
+  getProfile: apiElement("GET", "/user/profile"),
+  updateProfile: apiElement("PUT", "/user/update"),
 };
 
 export default api;
