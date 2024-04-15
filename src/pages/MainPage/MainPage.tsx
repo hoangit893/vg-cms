@@ -21,13 +21,13 @@ const MainPage = () => {
     textAlign: "center",
   };
 
-  const { isAuthenticated } = useAuth();
+  // const { isAuthenticated } = useAuth();
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      window.location.href = "/login";
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!isAuthenticated) {
+  //     window.location.href = "/login";
+  //   }
+  // }, []);
 
   return (
     <>
