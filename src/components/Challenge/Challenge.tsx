@@ -510,7 +510,7 @@ export default function Challenge() {
               ></Select>
             </Form.Item>
             <Form.Item
-              // rules={formRules.point}
+              rules={formRules.point}
               style={{ width: "50%" }}
               label="Điểm"
               name="point"

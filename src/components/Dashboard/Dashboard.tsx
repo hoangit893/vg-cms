@@ -19,10 +19,16 @@ export default function Dashboard() {
           <RankList />
         </Col>
       </Row>
-      <Row>
-        <Col span={24}>
+      <Row
+        style={{
+          justifyContent: "space-between",
+          marginBottom: "20px",
+        }}
+      >
+        <Col span={17}>
           <Statistics />
         </Col>
+        <Col span={6}></Col>
       </Row>
     </div>
   );

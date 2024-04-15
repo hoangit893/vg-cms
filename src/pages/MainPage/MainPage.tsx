@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Layout, Typography } from "antd";
 import "./MainPage.css";
 import { Header } from "antd/es/layout/layout";
@@ -10,6 +10,7 @@ import {
   MacCommandOutlined,
   RightSquareOutlined,
 } from "@ant-design/icons";
+import { useAuth } from "../../context/AuthContext";
 const { Sider, Content } = Layout;
 
 const MainPage = () => {
@@ -19,6 +20,14 @@ const MainPage = () => {
     color: "#b44445",
     textAlign: "center",
   };
+
+  const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      window.location.href = "/login";
+    }
+  }, []);
 
   return (
     <>
